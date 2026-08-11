@@ -1,0 +1,145 @@
+/* ============================================================
+   Widget Chatbot — Jernih Assist
+   Vanilla JS, tanpa dependency. Berkomunikasi dengan backend
+   Laravel lewat POST /chatbot (dengan CSRF token).
+   ============================================================ */
+(function () {
+    'use strict';
+
+    const MAX_HISTORY = 20;          // jumlah putaran pesan yang dikirim sbg konteks
+    const HISTORY_KEY = 'jn_chat_history';
+
+    var root       = document.getElementById('chatbot');
+    var toggleBtn  = document.getElementById('chatbot-toggle');
+    var closeBtn   = document.getElementById('chatbot-close');
+    var panel      = document.getElementById('chatbot-panel');
+    var body       = document.getElementById('chatbot-body');
+    var form       = document.getElementById('chatbot-form');
+    var input      = document.getElementById('chatbot-input');
+    var sendBtn    = form ? form.querySelector('.chatbot-send') : null;
+
+    // Tidak ada elemen widget -> berhenti (misal halaman tanpa layout).
+    if (!root || !toggleBtn || !panel || !body || !form || !input) return;
+
+    var history = loadHistory();
+
+    /* ---------- helper render ---------- */
+    function addMessage(text, type) {
+        var msg = document.createElement('div');
+        msg.className = 'chatbot-msg chatbot-msg--' + (type || 'bot');
+        msg.textContent = text;
+        body.appendChild(msg);
+        body.scrollTop = body.scrollHeight;
+        return msg;
+    }
+
+    function showTyping() {
+        var t = document.createElement('div');
+        t.className = 'chatbot-msg chatbot-msg--bot chatbot-msg--typing';
+        t.innerHTML = '<span class="chatbot-typing-dot"></span><span class="chatbot-typing-dot"></span><span class="chatbot-typing-dot"></span> Mengetik…';
+        body.appendChild(t);
+        body.scrollTop = body.scrollHeight;
+        return t;
+    }
+
+    /* ---------- riwayat percakapan (localStorage) ---------- */
+    function loadHistory() {
+        try {
+            var raw = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            return Array.isArray(raw) ? raw.filter(validItem).slice(-MAX_HISTORY * 2) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function validItem(item) {
+        return item && ['user', 'assistant'].indexOf(item.role) !== -1 &&
+               typeof item.content === 'string' && item.content;
+    }
+
+    function pushHistory(role, content) {
+        history.push({ role: role, content: content });
+        if (history.length > MAX_HISTORY * 2) history = history.slice(-MAX_HISTORY * 2);
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (e) {}
+    }
+
+    /* ---------- percakapan ---------- */
+    function openPanel() {
+        root.classList.add('is-open');
+        panel.hidden = false;
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        if (body.children.length === 0) {
+            addMessage('Halo! Selamat datang di website Jernih Multi Komunikasi 👋 Saya asisten AI. Ada yang bisa saya bantu, misalnya seputar layanan atau cara menghubungi kami?', 'bot');
+            pushHistory('assistant', 'Halo! Ada yang bisa saya bantu?');
+        }
+        input.focus();
+    }
+
+    function closePanel() {
+        root.classList.remove('is-open');
+        panel.hidden = true;
+        toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    function send() {
+        var text = input.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        pushHistory('user', text);
+        input.value = '';
+        input.disabled = true;
+        if (sendBtn) sendBtn.disabled = true;
+
+        var typing = showTyping();
+        var csrf = document.querySelector('meta[name="csrf-token"]');
+        var token = csrf ? csrf.getAttribute('content') : '';
+
+        fetch('/chatbot', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({ message: text, history: history })
+        })
+        .then(function (res) {
+            return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+        })
+        .then(function (result) {
+            if (typing.parentNode) typing.remove();
+            if (result.ok && result.data && result.data.reply) {
+                addMessage(result.data.reply, 'bot');
+                pushHistory('assistant', result.data.reply);
+            } else {
+                addMessage((result.data && result.data.error) || 'Maaf, terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        })
+        .catch(function () {
+            if (typing.parentNode) typing.remove();
+            addMessage('Koneksi bermasalah. Periksa internet Anda lalu coba lagi.', 'error');
+        })
+        .finally(function () {
+            input.disabled = false;
+            if (sendBtn) sendBtn.disabled = false;
+            input.focus();
+        });
+    }
+
+    /* ---------- events ---------- */
+    toggleBtn.addEventListener('click', function () {
+        panel.hidden ? openPanel() : closePanel();
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closePanel);
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        send();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !panel.hidden) closePanel();
+    });
+})();

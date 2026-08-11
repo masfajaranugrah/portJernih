@@ -18,30 +18,12 @@
             </div>
             <div class="at-offcanvas-content d-none d-xl-block">
                 <h3 class="at-offcanvas-title">Tentang Kami</h3>
-                <p class="fz-font-lg">Jernih Multi Komunikasi — penyedia layanan teknologi informasi dan sistem integrator jaringan terpercaya di Indonesia sejak 2005. Menghadirkan koneksi stabil untuk rumah, usaha, hingga enterprise.</p>
+                <p class="fz-font-lg">Jernih Multi Komunikasi penyedia layanan teknologi informasi dan sistem integrator jaringan terpercaya di Indonesia sejak 2005. Menghadirkan koneksi stabil untuk rumah, usaha, hingga enterprise.</p>
             </div>
             <div class="at-offcanvas-menu d-xl-none pb-50">
                 <nav></nav>
             </div>
-            <div class="at-offcanvas-gallery d-none d-xl-block">
-                <div class="sec-2-home-5__avatars-row d-flex gap-2">
-                    <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="{{ asset('assets/imgs/template/avatar/avatar-10.webp') }}" alt="orisa">
-                    </div>
-                    <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="{{ asset('assets/imgs/template/avatar/avatar-11.webp') }}" alt="orisa">
-                    </div>
-                    <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="{{ asset('assets/imgs/template/avatar/avatar-12.webp') }}" alt="orisa">
-                    </div>
-                    <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="{{ asset('assets/imgs/template/avatar/avatar-13.webp') }}" alt="orisa">
-                    </div>
-                    <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="{{ asset('assets/imgs/template/avatar/avatar-14.webp') }}" alt="orisa">
-                    </div>
-                </div>
-            </div>
+            
             <div class="at-offcanvas-contact">
                 <h4 class="h5 at-offcanvas-title sm">Hubungi Kami</h4>
                 <ul>

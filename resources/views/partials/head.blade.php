@@ -2,6 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Orisa — Creative Agency &amp; Portfolio HTML Template. Multi-demo layout kit built with Bootstrap 5.">
     <title>@yield('title', 'Jernih Net')</title>
     <!-- Favicon icon-->
@@ -19,4 +20,5 @@
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+    {{-- Chatbot di-sembunyikan sementara. {{ asset('assets/css/chatbot.css') }} --}}
 </head>
