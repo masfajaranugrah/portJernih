@@ -682,7 +682,7 @@
                                         <a href="mailto:pt.jernihmultikomunikasi@gmail.com">pt.jernihmultikomunikasi@gmail.com</a>
                                     </p>
                                     <p class="h6 fw-600 mb-0">
-                                        <a href="tel:0272123456">(0272) 123-456</a>
+                                        <a href="tel:0272123456">(0272)3393373</a>
                                     </p>
                                 </div>
                             </div>
