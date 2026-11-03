@@ -17,12 +17,11 @@
     <section class="container"><div class="row justify-content-center"><div class="col-lg-9 col-xl-8">
         <div class="success-card bg-neutral-0 rounded-4 p-lg-5 p-4 text-center at_fade_anim">
             <div class="success-icon"><svg viewBox="0 0 52 52" fill="none" aria-hidden="true"><path d="M14 27.5l8 8L39 17" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span class="fz-font-label text-uppercase neutral-500">Nomor Registrasi: {{ $registration['registration_number'] }}</span>
-            <h1 class="h1 mt-3 mb-3">PENDAFTARAN BERHASIL!</h1>
-            <p class="fz-font-lg neutral-500 mx-auto mb-5" style="max-width:620px">Terima kasih telah mendaftar. Permohonan pemasangan internet Anda telah kami terima.</p>
+            <h1 class="h1 mt-3 mb-2">PENDAFTARAN BERHASIL!</h1>
+            <p class="fz-font-lg neutral-500 mx-auto mb-2" style="max-width:620px">Terima kasih telah mendaftar. Permohonan pemasangan internet Anda telah kami terima.</p>
+            <p class="h4 fw-bold mb-5">Nomor Registrasi: {{ $registration['registration_number'] }}</p>
             <div class="text-start bg-neutral-50 p-lg-4 p-3 mb-5"><h2 class="h4 mb-3">Ringkasan Data Pemohon</h2>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Nama Pemohon</span><strong class="text-end">{{ $registration['name'] }}</strong></div>
-                <div class="summary-row d-flex justify-content-between gap-4"><span>Nomor KTP</span><strong class="text-end">{{ $registration['nik'] }}</strong></div>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Nomor WhatsApp</span><strong class="text-end">{{ $registration['phone'] }}</strong></div>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Alamat pemasangan</span><strong class="text-end">{{ $registration['address'] }}, {{ $registration['village'] }}, {{ $registration['district'] }}</strong></div>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Paket internet</span><strong class="text-end">{{ $registration['package_name'] }}</strong></div>
