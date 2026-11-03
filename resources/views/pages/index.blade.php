@@ -9,16 +9,15 @@
                     <div class="sec-1-home-4 bg-linear-opacity p-relative bg-cover mt-3 rounded-5 mx-lg-3 mx-2" style="padding: clamp(40px, 6vw, 80px) 0 clamp(60px, 8vw, 110px);" data-background="{{ asset('assets/imgs/pages/hero.png') }}">
                         <div class="container p-relative z-index-1">
                             <div class="row align-items-start">
-                                <!-- Left: Tagline, Headline, Buttons -->
+                                <!-- Left: Tagline, Headline -->
                                 <div class="col-12">
                                     <span class="sec-1-home-4__tagline d-inline-block mb-30">[ Internet Service Provider ]</span>
                                 </div>
-                                <div class="col-xxl-4 col-lg-5 mb-5 mb-lg-0">
-                                    <h4 class="sec-1-home-4__headline text-white mb-4 mb-md-5 lh-1">
-                                        Cepat. Stabil. Selalu terhubung. Internet fiber optik untuk rumah & bisnis Anda, mulai Rp 120.000/bulan dengan support 24/7.
-                                    </h4>
-                               
-                                </div>
+                                 <div class="col-xxl-4 col-lg-5 mb-5 mb-lg-0">
+                                     <h4 class="sec-1-home-4__headline text-white mb-4 mb-md-5 lh-1">
+                                         Cepat. Stabil. Selalu terhubung. Internet fiber optik untuk rumah & bisnis Anda, mulai Rp 120.000/bulan dengan support 24/7.
+                                     </h4>
+                                 </div>
                                 <!-- Right: Image Cards + Tags -->
                                 <div class="col-xxl-4 col-lg-6 col-md-10 ms-lg-auto mt-lg-0 mt-4">
                                     <div class="sec-1-home-4__cards d-flex gap-3 mb-4">
@@ -63,6 +62,54 @@
                                     PT. Jernih Multi Komunikasi<span class="sec-1-home-4__brand-suffix"><sup>®</sup></span>
                                 </h2>
                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Alur Registrasi -->
+                <div class="container-2200 pt-60">
+                    <div class="bg-neutral-0 rounded-5 mx-lg-3 mx-2 p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-4">
+                                <span class="at-btn common-black bg-transparent mb-10 rounded-0 p-0">
+                                    <span class="text-uppercase">
+                                        <span class="text-1">REGISTRASI MUDAH</span>
+                                        <span class="text-2">REGISTRASI MUDAH</span>
+                                    </span>
+                                </span>
+                                <h2 class="h3 mb-3">Pasang internet baru hanya dalam 3 langkah</h2>
+                                <p class="neutral-500 mb-4">Mulai dari formulir registrasi. Tim JernihNet akan memproses permohonan dan menghubungi Anda.</p>
+                                <a class="at-btn" href="{{ route('registration.create') }}">
+                                    <span>
+                                        <span class="text-1">MULAI REGISTRASI</span>
+                                        <span class="text-2">MULAI REGISTRASI</span>
+                                    </span>
+                                </a>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="h-100 p-4 rounded-4 bg-neutral-50">
+                                            <span class="h3 fw-700 d-block mb-3">01</span>
+                                            <h3 class="h6 mb-2">Isi data pemohon</h3>
+                                            <p class="small neutral-500 mb-0">Lengkapi nama, NIK, WhatsApp, dan alamat pemasangan.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="h-100 p-4 rounded-4 bg-neutral-50">
+                                            <span class="h3 fw-700 d-block mb-3">02</span>
+                                            <h3 class="h6 mb-2">Tandai lokasi & pilih paket</h3>
+                                            <p class="small neutral-500 mb-0">Tentukan titik rumah dan pilih paket internet yang sesuai.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="h-100 p-4 rounded-4 bg-neutral-50">
+                                            <span class="h3 fw-700 d-block mb-3">03</span>
+                                            <h3 class="h6 mb-2">Kami hubungi Anda</h3>
+                                            <p class="small neutral-500 mb-0">Tim kami memeriksa jangkauan jaringan dan menjadwalkan pemasangan.</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -539,7 +586,7 @@
                 </div>
                 <!--Home 2 Section 12-->
                 <div class="container-2200">
-                    <div class="home-2-section-12 rounded-5 overflow-hidden mx-lg-3 mx-2 mt-50 p-relative pt-100 pb-100">
+                    <div class="home-2-section-12 rounded-5 overflow-hidden mx-lg-3 mx-2 mt-50 p-relative pt-100 pb-100" id="paket-layanan">
                         <div class="p-absolute top-0 left-0 w-100 h-100 rounded-5 opacity-10 z-0" data-background="assets/imgs/pages/noise.gif"></div>
                         <div class="container p-relative z-1">
                             <div class="row g-4">
@@ -587,8 +634,8 @@
                                                         <span class="home-2-pricing-card__price-period">/bulan</span>
                                                     </div>
                                                     <p class="home-2-pricing-card__desc">Cocok untuk kebutuhan dasar internet rumahan dan browsing.</p>
-                                                    <a class="at-btn px-5" href="{{ route('contact') }}">
-                                                        <span><span class="text-1 text-capitalize">Pilih Paket</span><span class="text-2 text-capitalize">Pilih Paket</span></span>
+                                                    <a class="at-btn px-5" href="{{ route('registration.create') }}">
+                                                        <span><span class="text-1 text-capitalize">Daftar Paket Ini</span><span class="text-2 text-capitalize">Daftar Paket Ini</span></span>
                                                         <i>
                                                             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor"></path></svg>
                                                             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor"></path></svg>
@@ -620,8 +667,8 @@
                                                         <span class="home-2-pricing-card__price-period">/bulan</span>
                                                     </div>
                                                     <p class="home-2-pricing-card__desc">Ideal untuk streaming HD dan gaming online dengan lancar.</p>
-                                                    <a class="at-btn px-5" href="{{ route('contact') }}">
-                                                        <span><span class="text-1 text-capitalize">Pilih Paket</span><span class="text-2 text-capitalize">Pilih Paket</span></span>
+                                                    <a class="at-btn px-5" href="{{ route('registration.create') }}">
+                                                        <span><span class="text-1 text-capitalize">Daftar Paket Ini</span><span class="text-2 text-capitalize">Daftar Paket Ini</span></span>
                                                         <i>
                                                             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor"></path></svg>
                                                             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor"></path></svg>
@@ -652,8 +699,8 @@
                                                         <span class="home-2-pricing-card__price-period">/bulan</span>
                                                     </div>
                                                     <p class="home-2-pricing-card__desc">Performa maksimal untuk aktivitas banyak perangkat sekaligus.</p>
-                                                    <a class="at-btn px-5" href="{{ route('contact') }}">
-                                                        <span><span class="text-1 text-capitalize">Pilih Paket</span><span class="text-2 text-capitalize">Pilih Paket</span></span>
+                                                    <a class="at-btn px-5" href="{{ route('registration.create') }}">
+                                                        <span><span class="text-1 text-capitalize">Daftar Paket Ini</span><span class="text-2 text-capitalize">Daftar Paket Ini</span></span>
                                                         <i>
                                                             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor"></path></svg>
                                                             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor"></path></svg>

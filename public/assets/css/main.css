@@ -9574,6 +9574,22 @@ input.footer-15__form-input:focus {
     backdrop-filter: blur(3px);
   }
 }
+.sec-1-home-4-wrap .sec-1-home-4__btns .at-btn.hero-register-btn {
+  background: #FEFEFE;
+  color: #101C2D;
+  border: 1px solid #FEFEFE;
+  padding: 18px 32px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  backdrop-filter: none;
+}
+.sec-1-home-4-wrap .sec-1-home-4__btns .at-btn.hero-register-btn:hover {
+  background: #101C2D;
+  color: #FEFEFE;
+  border-color: rgba(255, 255, 255, 0.6);
+}
 .sec-1-home-4-wrap .sec-1-home-4__cards {
   justify-content: flex-end;
 }
