@@ -337,14 +337,12 @@
                         <h3 class="h4 mb-2">Pilih Paket Internet</h3>
                         <p class="neutral-500 mb-4">Harga berlangganan per bulan.</p>
                         <div class="row g-3" id="package-list"></div>
+                        <div id="package-loading" class="text-center py-4" style="display:none;">
+                            <p class="neutral-500 mb-0">Memuat paket…</p>
+                        </div>
                         <div id="package-empty" class="text-center py-4" style="display:none;">
                             <p class="neutral-500 mb-0">Tidak ada paket tersedia di wilayah Anda.</p>
                         </div>
-                        <div id="package-loading" class="text-center py-4" style="display:none;">
-                            <p class="neutral-500 mb-0">Memuat paket...</p>
-                        </div>
-                        <input type="hidden" name="package_name" id="package_name" value="{{ old('package_name') }}">
-                        <input type="hidden" name="package_price" id="package_price" value="{{ old('package_price') }}">
                         @error('package')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
                     </div>
 
@@ -638,57 +636,55 @@ document.addEventListener('DOMContentLoaded', function () {
     selPostalCode.restoreLabel();
 
     /* ════════════════════════════════════════════════════════════════
-       PACKAGE BY WILAYAH - fetch from layanan.jernih.net.id
+       PACKAGE BY WILAYAH — fetch dari API berdasarkan kabupaten
     ════════════════════════════════════════════════════════════════ */
-    const packageListEl = document.getElementById('package-list');
-    const packageEmptyEl = document.getElementById('package-empty');
+    const packageListEl    = document.getElementById('package-list');
+    const packageEmptyEl   = document.getElementById('package-empty');
     const packageLoadingEl = document.getElementById('package-loading');
-    const packageNameInput = document.getElementById('package_name');
-    const packagePriceInput = document.getElementById('package_price');
-    let currentPackages = [];
 
     function formatRupiah(angka) {
         if (angka == null) return 'Rp 0';
-        const num = typeof angka === 'string' ? angka.replace(/[^0-9]/g, '') : angka;
-        if (num === '' || isNaN(num)) return 'Rp ' + angka;
-        return 'Rp ' + Number(num).toLocaleString('id-ID');
+        /* parseFloat baca "100000.00" sebagai 100000, bukan strip titik jadi 10000000 */
+        const num = parseFloat(angka);
+        if (isNaN(num)) return 'Rp ' + angka;
+        return 'Rp ' + Math.round(num).toLocaleString('id-ID');
     }
 
     async function fetchPackagesByWilayah(kabupaten) {
         if (!kabupaten || !packageListEl) return;
         packageLoadingEl.style.display = 'block';
-        packageEmptyEl.style.display = 'none';
-        packageListEl.innerHTML = '';
-        currentPackages = [];
+        packageEmptyEl.style.display   = 'none';
+        packageListEl.innerHTML        = '';
 
         const cleanWilayah = kabupaten.replace(/\b(kabupaten|kota)\b/gi, '').replace(/\s+/g, ' ').trim();
 
         try {
-            let url = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(cleanWilayah || kabupaten);
-            let res = await fetch(url);
+            let url  = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(cleanWilayah || kabupaten);
+            let res  = await fetch(url);
             let json = await res.json();
             let data = json.data || [];
 
+            /* fallback: coba nama kabupaten asli jika hasil kosong */
             if (!data.length && cleanWilayah && cleanWilayah.toLowerCase() !== kabupaten.toLowerCase()) {
-                url = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(kabupaten);
-                res = await fetch(url);
+                url  = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(kabupaten);
+                res  = await fetch(url);
                 json = await res.json();
                 data = json.data || [];
             }
 
-            currentPackages = data;
             if (!data.length) {
                 packageEmptyEl.style.display = 'block';
                 return;
             }
+
+            const oldPackage = '{{ old('package') }}';
             packageListEl.innerHTML = data.map(pkg => {
-                const id = pkg.id;
-                const name = pkg.nama_paket || pkg.name || '';
-                const price = formatRupiah(pkg.harga || pkg.price);
-                const speed = pkg.kecepatan ? pkg.kecepatan + ' Mbps' : name;
+                const price = formatRupiah(pkg.harga);
+                const speed = (pkg.kecepatan ?? '') + ' Mbps';
+                const checked = oldPackage === pkg.id ? 'checked' : '';
                 return `<div class="col-xl col-lg-4 col-md-4 col-6 package-card">
                     <label class="package-option">
-                        <input type="radio" name="package" value="${escHtml(id)}" data-name="${escHtml(name)}" data-price="${escHtml(price)}" required>
+                        <input type="radio" name="package" value="${escHtml(pkg.id)}" ${checked} required>
                         <span class="package-option__body">
                             <span class="package-option__check">
                                 <svg viewBox="0 0 12 12" fill="none"><path d="M2 6.2 4.6 9 10 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -700,18 +696,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     </label>
                 </div>`;
             }).join('');
-            packageListEl.querySelectorAll('input[name="package"]').forEach(r => {
-                r.addEventListener('change', (e) => {
-                    if (e.target.checked) {
-                        if (packageNameInput) packageNameInput.value = e.target.dataset.name || '';
-                        if (packagePriceInput) packagePriceInput.value = e.target.dataset.price || '';
-                    }
-                });
-            });
         } catch (e) {
             console.error('Gagal memuat paket:', e);
             packageEmptyEl.style.display = 'block';
-            packageEmptyEl.querySelector('p').textContent = 'Gagal memuat paket. Silakan coba lagi.';
         } finally {
             packageLoadingEl.style.display = 'none';
         }
@@ -724,31 +711,33 @@ document.addEventListener('DOMContentLoaded', function () {
     const addressFields   = addressFieldIds.map(id => document.getElementById(id));
     const packageSection  = document.getElementById('package-section');
     const addressNote     = document.getElementById('package-address-note');
-    const cityInputHidden = document.getElementById('city');
+    const cityHidden      = document.getElementById('city');
+
+    let _lastFetchedCity = null;
 
     function updatePackages() {
         const addressComplete = addressFields.every(f => f && f.value.trim());
         if (packageSection) packageSection.classList.toggle('is-ready', addressComplete);
         if (addressNote) addressNote.style.display = addressComplete ? 'none' : 'flex';
-        if (addressComplete && cityInputHidden && cityInputHidden.value && packageListEl) {
-            fetchPackagesByWilayah(cityInputHidden.value);
+
+        if (addressComplete && cityHidden.value) {
+            /* hanya fetch ulang jika kota berubah */
+            if (cityHidden.value !== _lastFetchedCity) {
+                _lastFetchedCity = cityHidden.value;
+                fetchPackagesByWilayah(cityHidden.value);
+            }
         } else if (!addressComplete) {
-            if (packageListEl) packageListEl.innerHTML = '';
-            if (packageEmptyEl) packageEmptyEl.style.display = 'none';
-            if (packageLoadingEl) packageLoadingEl.style.display = 'none';
-            if (packageNameInput) packageNameInput.value = '';
-            if (packagePriceInput) packagePriceInput.value = '';
+            packageListEl.innerHTML        = '';
+            packageEmptyEl.style.display   = 'none';
+            packageLoadingEl.style.display = 'none';
+            _lastFetchedCity = null;
         }
     }
 
     addressFields.forEach(f => f && f.addEventListener('change', updatePackages));
-    const addrEl = document.getElementById('address');
-    const rtEl = document.getElementById('rt');
-    const rwEl = document.getElementById('rw');
-    if (addrEl) addrEl.addEventListener('input', updatePackages);
-    if (rtEl) rtEl.addEventListener('input', updatePackages);
-    if (rwEl) rwEl.addEventListener('input', updatePackages);
-    if (cityInputHidden) cityInputHidden.addEventListener('change', updatePackages);
+    document.getElementById('address').addEventListener('input', updatePackages);
+    document.getElementById('rt').addEventListener('input', updatePackages);
+    document.getElementById('rw').addEventListener('input', updatePackages);
     updatePackages();
     const locationButton  = document.getElementById('get-location');
     const locationStatus  = document.getElementById('location-status');

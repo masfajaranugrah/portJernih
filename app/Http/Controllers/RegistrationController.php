@@ -10,14 +10,9 @@ use Illuminate\Support\Str;
 
 class RegistrationController extends Controller
 {
-    private const PACKAGES = [
-        'b0f299ef-5a5a-4b4c-a3a7-8708740f5f65' => ['name' => '10 Mbps', 'price' => 'Rp 100.000'],
-        'c37583e2-744e-4f3e-84b2-d3824b38f8f4' => ['name' => '30 Mbps', 'price' => 'Rp 250.000'],
-    ];
-
     public function create()
     {
-        return view('pages.registration', ['packages' => self::PACKAGES]);
+        return view('pages.registration');
     }
 
     public function store(Request $request)
@@ -37,10 +32,8 @@ class RegistrationController extends Controller
             'postal_code' => ['nullable', 'digits_between:4,6'],
             'latitude'    => ['nullable', 'required_with:longitude', 'numeric', 'between:-90,90'],
             'longitude'   => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
-            'package'     => ['required', 'string', 'max:100'],
+            'package'     => ['required', 'string', 'uuid'],
             'terms'       => ['accepted'],
-            'package_name' => ['nullable', 'string', 'max:100'],
-            'package_price' => ['nullable', 'string', 'max:50'],
         ], [], [
             'name'        => 'nama lengkap',
             'nik'         => 'Nomor KTP / NIK',
@@ -57,15 +50,10 @@ class RegistrationController extends Controller
             'terms'       => 'ketentuan dan kebijakan',
         ]);
 
-        $packageName = $validated['package_name'] ?? 'Paket Internet';
-        $packagePrice = $validated['package_price'] ?? '-';
-
-        $registrationNumber = 'JMK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
-
         $registration = array_merge($validated, [
-            'package_name'        => $packageName,
-            'package_price'       => $packagePrice,
-            'registration_number' => $registrationNumber,
+            'package_name'        => 'Paket Internet',
+            'package_price'       => '-',
+            'registration_number' => 'JMK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
         ]);
 
         $payload = [
@@ -73,7 +61,7 @@ class RegistrationController extends Controller
             'no_whatsapp'      => $validated['phone'],
             'no_telp'          => $validated['phone'],
             'status'           => 'pending',
-            'nomer_id'         => $registrationNumber,
+            'nomer_id'         => $validated['nik'],
             'tanggal_mulai'    => now()->toDateString(),
             'tanggal_berakhir' => now()->addMonthNoOverflow()->toDateString(),
             'paket_id'         => $validated['package'],
