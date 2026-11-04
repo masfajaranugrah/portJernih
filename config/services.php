@@ -40,4 +40,10 @@ return [
         'default_model' => env('OPENAI_DEFAULT_MODEL', 'gpt-4o-mini'),
     ],
 
+    'jernih' => [
+        'url'     => env('JERNIH_API_URL', 'https://layanan.jernih.net.id/api/admin/pelanggan'),
+        'key'     => env('JERNIH_API_KEY'),
+        'timeout' => (int) env('JERNIH_API_TIMEOUT', 15),
+    ],
+
 ];

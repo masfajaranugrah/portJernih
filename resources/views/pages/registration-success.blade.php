@@ -23,12 +23,17 @@
             <div class="text-start bg-neutral-50 p-lg-4 p-3 mb-5"><h2 class="h4 mb-3">Ringkasan Data Pemohon</h2>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Nama Pemohon</span><strong class="text-end">{{ $registration['name'] }}</strong></div>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Nomor WhatsApp</span><strong class="text-end">{{ $registration['phone'] }}</strong></div>
-                <div class="summary-row d-flex justify-content-between gap-4"><span>Alamat pemasangan</span><strong class="text-end">{{ $registration['address'] }}, {{ $registration['village'] }}, {{ $registration['district'] }}</strong></div>
+                <div class="summary-row d-flex justify-content-between gap-4"><span>Alamat pemasangan</span><strong class="text-end">{{ $registration['address'] }}, RT {{ $registration['rt'] }}/RW {{ $registration['rw'] }}, {{ $registration['village'] }}, {{ $registration['district'] }}, {{ $registration['city'] }}{{ $registration['postal_code'] ? ', ' . $registration['postal_code'] : '' }}</strong></div>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Paket internet</span><strong class="text-end">{{ $registration['package_name'] }}</strong></div>
                 <div class="summary-row d-flex justify-content-between gap-4"><span>Harga per bulan</span><strong class="text-end">{{ $registration['package_price'] }}</strong></div>
             </div>
             @php($whatsappText = rawurlencode("Halo Admin JernihNet, saya {$registration['name']} ingin menindaklanjuti pendaftaran {$registration['registration_number']}."))
-            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3"><a class="at-btn justify-content-center" href="https://wa.me/6281818461122?text={{ $whatsappText }}" target="_blank" rel="noopener"><span><span class="text-1">HUBUNGI ADMIN VIA WHATSAPP</span><span class="text-2">HUBUNGI ADMIN VIA WHATSAPP</span></span></a><a class="at-btn success-back justify-content-center" href="{{ route('home') }}"><span><span class="text-1">KEMBALI KE BERANDA</span><span class="text-2">KEMBALI KE BERANDA</span></span></a></div>
+            <p class="neutral-500 mb-3">Silakan masuk ke dashboard Anda menggunakan nomor telepon yang didaftarkan.</p>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                <a class="at-btn justify-content-center" href="https://layanan.jernih.net.id" target="_blank" rel="noopener"><span><span class="text-1">MASUK KE DASHBOARD</span><span class="text-2">MASUK KE DASHBOARD</span></span></a>
+                <a class="at-btn justify-content-center" href="https://wa.me/6281818461122?text={{ $whatsappText }}" target="_blank" rel="noopener"><span><span class="text-1">HUBUNGI ADMIN VIA WHATSAPP</span><span class="text-2">HUBUNGI ADMIN VIA WHATSAPP</span></span></a>
+                <a class="at-btn success-back justify-content-center" href="{{ route('home') }}"><span><span class="text-1">KEMBALI KE BERANDA</span><span class="text-2">KEMBALI KE BERANDA</span></span></a>
+            </div>
         </div>
     </div></div></section>
 </main>

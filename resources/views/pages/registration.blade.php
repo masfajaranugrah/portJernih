@@ -36,6 +36,10 @@
         .location-map { background: #e9edf0; border: 0; display: block; height: 290px; width: 100%; z-index: 0; }
         .location-status { font-size: .86rem; margin: 12px 0 0; }
         .location-status.is-success { color: #24703a; }
+        .registration-marker { background: transparent; border: 0; }
+        .registration-marker__badge { align-items: center; background: #fff; border: 2px solid #101c2d; border-radius: 14px; box-shadow: 0 10px 24px rgba(16, 28, 45, .22); display: flex; height: 42px; justify-content: center; position: relative; width: 68px; }
+        .registration-marker__badge::after { border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #101c2d; bottom: -10px; content: ''; left: 50%; position: absolute; transform: translateX(-50%); }
+        .registration-marker__badge img { display: block; max-height: 24px; max-width: 50px; width: auto; }
         @keyframes package-reveal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         [data-bs-theme="dark"] .registration-form { background: var(--at-neutral-900, #18212d); box-shadow: 0 25px 60px rgba(0,0,0,.25); }
         [data-bs-theme="dark"] .registration-section { border-color: rgba(255,255,255,.2); }
@@ -50,6 +54,104 @@
         .registration-submit { border: 0; width: 100%; justify-content: center; }
         .registration-page .invalid-feedback { font-size: .8rem; }
         @media (max-width: 575px) { .registration-form { padding: 25px !important; } }
+
+        /* ── Wilayah Dropdown ─────────────────────────────────────────── */
+        .wilayah-wrap { position: relative; }
+        .wilayah-search {
+            border: 1px solid rgba(20,29,43,.25);
+            border-radius: 2px;
+            min-height: 52px;
+            padding: .75rem 2.6rem .75rem 1rem;
+            background: transparent;
+            color: inherit;
+            width: 100%;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: border-color .15s, box-shadow .15s;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .wilayah-search:focus-visible { outline: none; }
+        .wilayah-search.is-open,
+        .wilayah-search:focus { border-color: #101c2d; box-shadow: 0 0 0 .18rem rgba(16,28,45,.1); }
+        .wilayah-search.is-invalid { border-color: #dc3545; }
+        .wilayah-search.is-invalid:focus { box-shadow: 0 0 0 .18rem rgba(220,53,69,.25); }
+        .wilayah-search__text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+        .wilayah-search__placeholder { color: rgba(20,29,43,.45); }
+        .wilayah-search__arrow {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            opacity: .55;
+            transition: transform .2s;
+            flex-shrink: 0;
+        }
+        .wilayah-search.is-open .wilayah-search__arrow { transform: translateY(-50%) rotate(180deg); }
+        .wilayah-search.is-disabled { opacity: .45; cursor: not-allowed; background: rgba(20,29,43,.04); }
+
+        .wilayah-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0; right: 0;
+            background: #fff;
+            border: 1px solid rgba(20,29,43,.18);
+            border-radius: 4px;
+            box-shadow: 0 12px 36px rgba(16,28,45,.14);
+            z-index: 1050;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .22s ease;
+        }
+        .wilayah-dropdown.is-open { display: block; max-height: 320px; }
+        .wilayah-dropdown__input-wrap { padding: 10px 10px 8px; border-bottom: 1px solid rgba(20,29,43,.1); position: sticky; top: 0; background: #fff; z-index: 1; }
+        .wilayah-dropdown__input {
+            width: 100%;
+            border: 1px solid rgba(20,29,43,.22);
+            border-radius: 3px;
+            padding: 7px 10px;
+            font-size: .88rem;
+            outline: none;
+        }
+        .wilayah-dropdown__input:focus { border-color: #101c2d; }
+        .wilayah-dropdown__list {
+            list-style: none;
+            margin: 0;
+            padding: 6px 0;
+            overflow-y: auto;
+            max-height: 240px;
+        }
+        .wilayah-dropdown__list li {
+            padding: 9px 14px;
+            cursor: pointer;
+            font-size: .9rem;
+            transition: background .12s;
+        }
+        .wilayah-dropdown__list li:hover,
+        .wilayah-dropdown__list li.is-focused { background: rgba(16,28,45,.06); }
+        .wilayah-dropdown__list li.is-selected { font-weight: 600; background: rgba(16,28,45,.09); }
+        .wilayah-dropdown__empty { padding: 16px 14px; font-size: .88rem; color: rgba(20,29,43,.55); text-align: center; }
+        .wilayah-loading { padding: 14px; text-align: center; font-size: .85rem; color: rgba(20,29,43,.5); }
+
+        [data-bs-theme="dark"] .wilayah-search { border-color: rgba(255,255,255,.72); color: #fff; }
+        [data-bs-theme="dark"] .wilayah-search.is-open,
+        [data-bs-theme="dark"] .wilayah-search:focus { border-color: #fff; box-shadow: 0 0 0 .18rem rgba(255,255,255,.12); }
+        [data-bs-theme="dark"] .wilayah-search__placeholder { color: rgba(255,255,255,.5); }
+        [data-bs-theme="dark"] .wilayah-search.is-disabled { background: rgba(255,255,255,.06); }
+        [data-bs-theme="dark"] .wilayah-dropdown { background: #1e2a3a; border-color: rgba(255,255,255,.2); }
+        [data-bs-theme="dark"] .wilayah-dropdown__input-wrap { background: #1e2a3a; border-color: rgba(255,255,255,.15); }
+        [data-bs-theme="dark"] .wilayah-dropdown__input { background: #253347; border-color: rgba(255,255,255,.3); color: #fff; }
+        [data-bs-theme="dark"] .wilayah-dropdown__list li:hover,
+        [data-bs-theme="dark"] .wilayah-dropdown__list li.is-focused { background: rgba(255,255,255,.1); }
+        [data-bs-theme="dark"] .wilayah-dropdown__list li.is-selected { background: rgba(255,255,255,.14); }
+        [data-bs-theme="dark"] .wilayah-dropdown__empty,
+        [data-bs-theme="dark"] .wilayah-loading { color: rgba(255,255,255,.55); }
     </style>
 
     <div class="container-2200 px-lg-3 px-2">
@@ -78,7 +180,22 @@
                     </div>
 
                     @if ($errors->any())
-                        <div class="alert alert-danger rounded-0 mb-4">Mohon periksa kembali data yang ditandai.</div>
+                        <div class="alert alert-danger rounded-0 mb-4">
+                            <strong>{{ $errors->first('registration') ?: 'Mohon periksa kembali data yang ditandai.' }}</strong>
+                            @php
+                                $apiErrors = $errors->messages();
+                                unset($apiErrors['registration']);
+                            @endphp
+                            @if(count($apiErrors))
+                                <ul class="mb-0 mt-2 ps-3" style="font-size:.875rem">
+                                    @foreach($apiErrors as $field => $messages)
+                                        @foreach($messages as $msg)
+                                            <li>{{ str_replace('registration_', '', $field) }}: {{ $msg }}</li>
+                                        @endforeach
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
                     @endif
 
                     <div class="row g-4">
@@ -89,14 +206,117 @@
                     </div>
 
                     <div class="registration-section">
-                        <h3 class="h4 mb-4">Alamat Pemasangan</h3>
+                        <h3 class="h4 mb-2">Alamat Pemasangan</h3>
+                        <p class="neutral-500 mb-4">Isi mulai dari alamat jalan, lalu RT/RW, desa/kelurahan, kecamatan, hingga kabupaten/kota dan provinsi.</p>
                         <div class="row g-4">
-                            <div class="col-md-6"><label class="form-label" for="province">PROVINSI *</label><input class="form-control @error('province') is-invalid @enderror" id="province" name="province" value="{{ old('province') }}" required>@error('province')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                            <div class="col-md-6"><label class="form-label" for="city">KABUPATEN / KOTA *</label><input class="form-control @error('city') is-invalid @enderror" id="city" name="city" value="{{ old('city') }}" required>@error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                            <div class="col-md-6"><label class="form-label" for="district">KECAMATAN *</label><input class="form-control @error('district') is-invalid @enderror" id="district" name="district" value="{{ old('district') }}" required>@error('district')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                            <div class="col-md-6"><label class="form-label" for="village">DESA / KELURAHAN *</label><input class="form-control @error('village') is-invalid @enderror" id="village" name="village" value="{{ old('village') }}" required>@error('village')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                            <div class="col-md-6"><label class="form-label" for="address">ALAMAT LENGKAP *</label><textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" required>{{ old('address') }}</textarea>@error('address')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                            <div class="col-md-6"><label class="form-label" for="landmark">PATOKAN LOKASI RUMAH *</label><textarea class="form-control @error('landmark') is-invalid @enderror" id="landmark" name="landmark" placeholder="Contoh: dekat masjid, pagar warna putih" required>{{ old('landmark') }}</textarea>@error('landmark')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-12"><label class="form-label" for="address">ALAMAT JALAN *<span class="fw-normal text-lowercase ms-1">(nama jalan / gang / blok / nomor rumah)</span></label><input class="form-control @error('address') is-invalid @enderror" id="address" name="address" value="{{ old('address') }}" placeholder="Contoh: Jl. Melati No. 12, Gang Mawar" required>@error('address')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-md-3 col-6"><label class="form-label" for="rt">RT *</label><input class="form-control @error('rt') is-invalid @enderror" id="rt" name="rt" value="{{ old('rt') }}" inputmode="numeric" placeholder="001" maxlength="10" required>@error('rt')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-md-3 col-6"><label class="form-label" for="rw">RW *</label><input class="form-control @error('rw') is-invalid @enderror" id="rw" name="rw" value="{{ old('rw') }}" inputmode="numeric" placeholder="002" maxlength="10" required>@error('rw')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            {{-- ── Provinsi ── --}}
+                            <div class="col-md-6">
+                                <label class="form-label" for="province-btn">PROVINSI *</label>
+                                <div class="wilayah-wrap" id="wrap-province">
+                                    <button type="button" class="wilayah-search @error('province') is-invalid @enderror" id="province-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Pilih provinsi">
+                                        <span class="wilayah-search__text">
+                                            <span class="wilayah-search__placeholder">Pilih provinsi…</span>
+                                        </span>
+                                        <svg class="wilayah-search__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 5l4.5 4.5L11.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                    <input type="hidden" name="province" id="province" value="{{ old('province') }}">
+                                    <div class="wilayah-dropdown" role="listbox" aria-label="Daftar provinsi">
+                                        <div class="wilayah-dropdown__input-wrap">
+                                            <input type="text" class="wilayah-dropdown__input" placeholder="Cari provinsi…" autocomplete="off" aria-label="Cari provinsi">
+                                        </div>
+                                        <ul class="wilayah-dropdown__list"></ul>
+                                    </div>
+                                </div>
+                                @error('province')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+
+                            {{-- ── Kabupaten / Kota ── --}}
+                            <div class="col-md-6">
+                                <label class="form-label" for="city-btn">KABUPATEN / KOTA *</label>
+                                <div class="wilayah-wrap" id="wrap-city">
+                                    <button type="button" class="wilayah-search is-disabled @error('city') is-invalid @enderror" id="city-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Pilih kabupaten/kota" disabled>
+                                        <span class="wilayah-search__text">
+                                            <span class="wilayah-search__placeholder">Pilih kabupaten / kota…</span>
+                                        </span>
+                                        <svg class="wilayah-search__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 5l4.5 4.5L11.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                    <input type="hidden" name="city" id="city" value="{{ old('city') }}">
+                                    <div class="wilayah-dropdown" role="listbox" aria-label="Daftar kabupaten/kota">
+                                        <div class="wilayah-dropdown__input-wrap">
+                                            <input type="text" class="wilayah-dropdown__input" placeholder="Cari kabupaten / kota…" autocomplete="off" aria-label="Cari kabupaten/kota">
+                                        </div>
+                                        <ul class="wilayah-dropdown__list"></ul>
+                                    </div>
+                                </div>
+                                @error('city')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+
+                            {{-- ── Kecamatan ── --}}
+                            <div class="col-md-6">
+                                <label class="form-label" for="district-btn">KECAMATAN *</label>
+                                <div class="wilayah-wrap" id="wrap-district">
+                                    <button type="button" class="wilayah-search is-disabled @error('district') is-invalid @enderror" id="district-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Pilih kecamatan" disabled>
+                                        <span class="wilayah-search__text">
+                                            <span class="wilayah-search__placeholder">Pilih kecamatan…</span>
+                                        </span>
+                                        <svg class="wilayah-search__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 5l4.5 4.5L11.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                    <input type="hidden" name="district" id="district" value="{{ old('district') }}">
+                                    <div class="wilayah-dropdown" role="listbox" aria-label="Daftar kecamatan">
+                                        <div class="wilayah-dropdown__input-wrap">
+                                            <input type="text" class="wilayah-dropdown__input" placeholder="Cari kecamatan…" autocomplete="off" aria-label="Cari kecamatan">
+                                        </div>
+                                        <ul class="wilayah-dropdown__list"></ul>
+                                    </div>
+                                </div>
+                                @error('district')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+
+                            {{-- ── Desa / Kelurahan ── --}}
+                            <div class="col-md-6">
+                                <label class="form-label" for="village-btn">DESA / KELURAHAN *</label>
+                                <div class="wilayah-wrap" id="wrap-village">
+                                    <button type="button" class="wilayah-search is-disabled @error('village') is-invalid @enderror" id="village-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Pilih desa/kelurahan" disabled>
+                                        <span class="wilayah-search__text">
+                                            <span class="wilayah-search__placeholder">Pilih desa / kelurahan…</span>
+                                        </span>
+                                        <svg class="wilayah-search__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 5l4.5 4.5L11.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                    <input type="hidden" name="village" id="village" value="{{ old('village') }}">
+                                    <div class="wilayah-dropdown" role="listbox" aria-label="Daftar desa/kelurahan">
+                                        <div class="wilayah-dropdown__input-wrap">
+                                            <input type="text" class="wilayah-dropdown__input" placeholder="Cari desa / kelurahan…" autocomplete="off" aria-label="Cari desa/kelurahan">
+                                        </div>
+                                        <ul class="wilayah-dropdown__list"></ul>
+                                    </div>
+                                </div>
+                                @error('village')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+
+                            {{-- ── Kode Pos ── --}}
+                            <div class="col-md-6">
+                                <label class="form-label" for="postal_code-btn">KODE POS <span class="fw-normal text-lowercase">(opsional, otomatis dari desa)</span></label>
+                                <div class="wilayah-wrap" id="wrap-postal_code">
+                                    <button type="button" class="wilayah-search is-disabled @error('postal_code') is-invalid @enderror" id="postal_code-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Pilih kode pos" disabled>
+                                        <span class="wilayah-search__text">
+                                            <span class="wilayah-search__placeholder">Otomatis dari desa…</span>
+                                        </span>
+                                        <svg class="wilayah-search__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 5l4.5 4.5L11.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                    <input type="hidden" name="postal_code" id="postal_code" value="{{ old('postal_code') }}">
+                                    <div class="wilayah-dropdown" role="listbox" aria-label="Daftar kode pos">
+                                        <div class="wilayah-dropdown__input-wrap">
+                                            <input type="text" class="wilayah-dropdown__input" placeholder="Cari kode pos…" autocomplete="off" inputmode="numeric" aria-label="Cari kode pos">
+                                        </div>
+                                        <ul class="wilayah-dropdown__list"></ul>
+                                    </div>
+                                </div>
+                                @error('postal_code')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+
                             <div class="col-12">
                                 <div class="location-tracker">
                                     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
@@ -114,22 +334,17 @@
                     </div>
 
                     <div class="registration-section package-section" id="package-section">
-                        <h3 class="h4 mb-2">Pilih Paket Internet</h3><p class="neutral-500 mb-4">Harga berlangganan per bulan.</p>
-                        <div class="row g-3">
-                            @foreach($packages as $key => $package)
-                                <div class="col-xl col-lg-4 col-md-4 col-6 package-card" data-package-card="{{ $key }}">
-                                    <label class="package-option">
-                                        <input type="radio" name="package" value="{{ $key }}" {{ old('package') === $key ? 'checked' : '' }} required>
-                                        <span class="package-option__body">
-                                            <span class="package-option__check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6.2 4.6 9 10 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                                            <span class="d-block fz-font-label neutral-500 mb-2">PAKET FIBER</span>
-                                            <span class="package-option__speed d-block">{{ $package['name'] }}</span>
-                                            <span class="package-option__price d-block fw-600" data-default-price="{{ $package['price'] }}" data-magelang-price="{{ ['20' => 'Rp 120.000', '30' => 'Rp 140.000', '40' => 'Rp 150.000', '50' => 'Rp 180.000'][$key] }}">{{ $package['price'] }} <small>/bulan</small></span>
-                                        </span>
-                                    </label>
-                                </div>
-                            @endforeach
+                        <h3 class="h4 mb-2">Pilih Paket Internet</h3>
+                        <p class="neutral-500 mb-4">Harga berlangganan per bulan.</p>
+                        <div class="row g-3" id="package-list"></div>
+                        <div id="package-empty" class="text-center py-4" style="display:none;">
+                            <p class="neutral-500 mb-0">Tidak ada paket tersedia di wilayah Anda.</p>
                         </div>
+                        <div id="package-loading" class="text-center py-4" style="display:none;">
+                            <p class="neutral-500 mb-0">Memuat paket...</p>
+                        </div>
+                        <input type="hidden" name="package_name" id="package_name" value="{{ old('package_name') }}">
+                        <input type="hidden" name="package_price" id="package_price" value="{{ old('package_price') }}">
                         @error('package')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
                     </div>
 
@@ -152,95 +367,450 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const addressFields = ['province', 'city', 'district', 'village', 'address', 'landmark'].map(id => document.getElementById(id));
-        const packageSection = document.getElementById('package-section');
-        const addressNote = document.getElementById('package-address-note');
-        const city = document.getElementById('city');
-            const prices = document.querySelectorAll('[data-default-price]');
-            const packageCards = document.querySelectorAll('[data-package-card]');
+document.addEventListener('DOMContentLoaded', function () {
 
-        function updatePackages() {
-            const addressComplete = addressFields.every(field => field && field.value.trim());
-            packageSection.classList.toggle('is-ready', addressComplete);
-            addressNote.style.display = addressComplete ? 'none' : 'flex';
+    /* ════════════════════════════════════════════════════════════════
+       WILAYAH — Searchable Cascading Dropdown
+       API: https://www.emsifa.com/api-wilayah-indonesia/v2
+    ════════════════════════════════════════════════════════════════ */
+    const API = 'https://www.emsifa.com/api-wilayah-indonesia/v2';
 
-            const isMagelang = city.value.toLowerCase().includes('magelang');
-            const isSukoharjo = city.value.toLowerCase().includes('sukoharjo');
-            prices.forEach(price => {
-                price.firstChild.nodeValue = ((isMagelang || isSukoharjo) ? price.dataset.magelangPrice : price.dataset.defaultPrice) + ' ';
-            });
-            packageCards.forEach(card => {
-                const unavailable = isSukoharjo && !['20', '30'].includes(card.dataset.packageCard);
-                card.classList.toggle('is-unavailable', unavailable);
-                if (unavailable) card.querySelector('input').checked = false;
-            });
+    /* ── helpers ── */
+    const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    function escHtml(s) {
+        if (s == null) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+    let _cache = {};
+    async function apiFetch(path) {
+        if (_cache[path]) return _cache[path];
+        const res = await fetch(API + path);
+        if (!res.ok) throw new Error('API error ' + res.status);
+        const json = await res.json();
+        /* API v2 wraps arrays in { data: [...] } and items use "id" as key */
+        const raw = json.data ?? json;
+        const data = Array.isArray(raw)
+            ? raw.map(item => ({ code: item.id, name: item.name, postal_code: item.postal_code ?? null, lat: item.lat ?? null, lng: item.lng ?? null }))
+            : raw;
+        _cache[path] = data;
+        return data;
+    }
+
+    /* ── WilayahSelect factory ── */
+    function WilayahSelect({ wrapId, btnId, hiddenId, searchPlaceholder, onSelect, onClear }) {
+        const wrap   = document.getElementById(wrapId);
+        const btn    = document.getElementById(btnId);
+        const hidden = document.getElementById(hiddenId);
+        const drop   = wrap.querySelector('.wilayah-dropdown');
+        const input  = drop.querySelector('.wilayah-dropdown__input');
+        const list   = drop.querySelector('.wilayah-dropdown__list');
+        const text   = btn.querySelector('.wilayah-search__text');
+
+        let items = [];   // { code, name } from API
+        let focusedIdx = -1;
+        let isOpen = false;
+        let selectedCode = null;   // track selected code separately (hidden stores name text)
+
+        function open() {
+            if (btn.disabled) return;
+            isOpen = true;
+            drop.classList.add('is-open');
+            btn.classList.add('is-open');
+            btn.setAttribute('aria-expanded', 'true');
+            input.value = '';
+            render(items);
+            setTimeout(() => input.focus(), 40);
         }
 
-        addressFields.forEach(field => field.addEventListener('input', updatePackages));
-        updatePackages();
+        function close() {
+            isOpen = false;
+            drop.classList.remove('is-open');
+            btn.classList.remove('is-open');
+            btn.setAttribute('aria-expanded', 'false');
+            focusedIdx = -1;
+        }
 
-        const locationButton = document.getElementById('get-location');
-        const locationStatus = document.getElementById('location-status');
-        const locationMap = document.getElementById('location-map');
-        const locationMapWrap = document.getElementById('location-map-wrap');
-        const latitude = document.getElementById('latitude');
-        const longitude = document.getElementById('longitude');
+        function setLabel(name) {
+            text.innerHTML = name
+                ? `<span style="color:inherit">${escHtml(name)}</span>`
+                : `<span class="wilayah-search__placeholder">${escHtml(searchPlaceholder)}</span>`;
+        }
 
-        let map;
-        let marker;
-
-        function showMap(lat, lng) {
-            const coordinates = [Number(lat), Number(lng)];
-            locationMapWrap.classList.add('is-visible');
-            if (!map) {
-                map = L.map(locationMap, { scrollWheelZoom: false }).setView(coordinates, 15);
-                map.attributionControl.setPrefix('JernihNet Maps');
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>'
-                }).addTo(map);
-                marker = L.marker(coordinates, { draggable: true }).addTo(map);
-                map.on('click', event => setLocation(event.latlng.lat, event.latlng.lng));
-                marker.on('dragend', event => {
-                    const point = event.target.getLatLng();
-                    setLocation(point.lat, point.lng);
-                });
-            } else {
-                marker.setLatLng(coordinates);
-                map.setView(coordinates, 15);
+        function render(filtered) {
+            if (!filtered.length) {
+                list.innerHTML = `<li class="wilayah-dropdown__empty">Tidak ditemukan</li>`;
+                return;
             }
-            setTimeout(() => map.invalidateSize(), 100);
-            locationStatus.classList.add('is-success');
+            list.innerHTML = filtered.map((it, i) =>
+                `<li role="option" data-code="${escHtml(it.code)}" data-name="${escHtml(it.name)}"
+                     class="${it.code === selectedCode ? 'is-selected' : ''}"
+                     tabindex="-1">${escHtml(it.name)}</li>`
+            ).join('');
+            focusedIdx = -1;
         }
 
-        function setLocation(lat, lng) {
-            const preciseLat = Number(lat).toFixed(6);
-            const preciseLng = Number(lng).toFixed(6);
-            latitude.value = preciseLat;
-            longitude.value = preciseLng;
-            showMap(preciseLat, preciseLng);
+        function moveFocus(dir) {
+            const lis = [...list.querySelectorAll('li[data-code]')];
+            if (!lis.length) return;
+            lis.forEach(li => li.classList.remove('is-focused'));
+            focusedIdx = Math.max(0, Math.min(lis.length - 1, focusedIdx + dir));
+            lis[focusedIdx].classList.add('is-focused');
+            lis[focusedIdx].scrollIntoView({ block: 'nearest' });
         }
 
-        if (latitude.value && longitude.value) showMap(latitude.value, longitude.value);
-
-        function captureCurrentLocation() {
-            if (!navigator.geolocation) { locationStatus.textContent = 'Browser ini belum mendukung pelacakan lokasi.'; return; }
-            locationStatus.classList.remove('is-success');
-            locationStatus.textContent = 'Mengambil titik lokasi saat ini dengan akurasi tinggi...';
-            navigator.geolocation.getCurrentPosition(function (position) {
-                const lat = position.coords.latitude.toFixed(6);
-                const lng = position.coords.longitude.toFixed(6);
-                const accuracy = Math.round(position.coords.accuracy);
-                setLocation(lat, lng);
-                locationStatus.textContent = `Titik lokasi saat ini berhasil ditandai (akurasi sekitar ${accuracy} meter).`;
-            }, function () {
-                locationStatus.textContent = 'Lokasi belum dapat diambil. Izinkan akses lokasi pada browser lalu coba kembali.';
-            }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+        function selectItem(code, name) {
+            selectedCode = code;
+            hidden.value = name;       // nilai yang dikirim ke controller = nama teks
+            setLabel(name);
+            drop.querySelectorAll('li').forEach(li =>
+                li.classList.toggle('is-selected', li.dataset.code === code));
+            close();
+            btn.classList.remove('is-invalid');
+            if (onSelect) onSelect(code, name);
+            hidden.dispatchEvent(new Event('change', { bubbles: true }));
         }
 
-        locationButton.addEventListener('click', captureCurrentLocation);
-        captureCurrentLocation();
+        function clear() {
+            selectedCode = null;
+            hidden.value = '';
+            setLabel('');
+            items = [];
+            list.innerHTML = '';
+            if (onClear) onClear();
+        }
+
+        function enable(newItems) {
+            items = newItems;
+            btn.disabled = false;
+            btn.classList.remove('is-disabled');
+        }
+
+        function disable() {
+            btn.disabled = true;
+            btn.classList.add('is-disabled');
+            clear();
+        }
+
+        function showLoading() {
+            list.innerHTML = `<li class="wilayah-loading">Memuat data…</li>`;
+        }
+
+        /* ── events ── */
+        btn.addEventListener('click', () => isOpen ? close() : open());
+
+        input.addEventListener('input', () => {
+            const q = norm(input.value.trim());
+            render(q ? items.filter(it => norm(it.name).includes(q)) : items);
+        });
+
+        input.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown') { e.preventDefault(); moveFocus(1); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); moveFocus(-1); }
+            else if (e.key === 'Enter') {
+                e.preventDefault();
+                const focused = list.querySelector('.is-focused');
+                if (focused) selectItem(focused.dataset.code, focused.dataset.name);
+            }
+            else if (e.key === 'Escape') close();
+        });
+
+        list.addEventListener('click', e => {
+            const li = e.target.closest('li[data-code]');
+            if (li) selectItem(li.dataset.code, li.dataset.name);
+        });
+
+        document.addEventListener('click', e => {
+            if (isOpen && !wrap.contains(e.target)) close();
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && isOpen) close();
+        });
+
+        /* ── restore label text from server old() value (name is already in hidden) ── */
+        function restoreLabel() {
+            if (hidden.value) {
+                text.innerHTML = `<span style="color:inherit">${escHtml(hidden.value)}</span>`;
+            }
+        }
+
+        return { enable, disable, selectItem, clear, showLoading, restoreLabel, getHidden: () => hidden, getSelectedCode: () => selectedCode };
+    }
+
+    /* ── Build the four selects ── */
+    /* track the last district code so village autofill can look up from cache */
+    let _lastDistrictCode = null;
+
+    const selProvince = WilayahSelect({
+        wrapId: 'wrap-province', btnId: 'province-btn', hiddenId: 'province',
+        searchPlaceholder: 'Pilih provinsi…',
+        onSelect: async (code, name) => {
+            selCity.disable();
+            selDistrict.disable();
+            selVillage.disable();
+            try {
+                const data = await apiFetch(`/regencies/${code}.json`);
+                selCity.enable(Array.isArray(data) ? data : []);
+            } catch(e) {
+                selCity.disable();
+            }
+        },
+        onClear: () => { selCity.disable(); selDistrict.disable(); selVillage.disable(); },
     });
+
+    const selCity = WilayahSelect({
+        wrapId: 'wrap-city', btnId: 'city-btn', hiddenId: 'city',
+        searchPlaceholder: 'Pilih kabupaten / kota…',
+        onSelect: async (code, name) => {
+            selDistrict.disable();
+            selVillage.disable();
+            try {
+                const data = await apiFetch(`/districts/${code}.json`);
+                selDistrict.enable(Array.isArray(data) ? data : []);
+            } catch(e) {
+                selDistrict.disable();
+            }
+        },
+        onClear: () => { selDistrict.disable(); selVillage.disable(); },
+    });
+
+    const selDistrict = WilayahSelect({
+        wrapId: 'wrap-district', btnId: 'district-btn', hiddenId: 'district',
+        searchPlaceholder: 'Pilih kecamatan…',
+        onSelect: async (code, name) => {
+            _lastDistrictCode = code;
+            selVillage.disable();
+            try {
+                const data = await apiFetch(`/villages/${code}.json`);
+                selVillage.enable(Array.isArray(data) ? data : []);
+            } catch(e) {
+                selVillage.disable();
+            }
+        },
+        onClear: () => { selVillage.disable(); _lastDistrictCode = null; },
+    });
+
+    const selVillage = WilayahSelect({
+        wrapId: 'wrap-village', btnId: 'village-btn', hiddenId: 'village',
+        searchPlaceholder: 'Pilih desa / kelurahan…',
+        onSelect: (code, name) => {
+            /* kumpulkan kode pos unik dari semua desa di kecamatan yang dipilih */
+            if (_lastDistrictCode) {
+                const villageList = _cache[`/villages/${_lastDistrictCode}.json`] || [];
+                const found = villageList.find(v => v.code === code);
+
+                /* kumpulkan semua kode pos unik dari kecamatan ini untuk opsi dropdown */
+                const postalCodes = [...new Set(
+                    villageList.filter(v => v.postal_code).map(v => v.postal_code)
+                )].sort().map(pc => ({ code: pc, name: pc, postal_code: pc }));
+
+                selPostalCode.enable(postalCodes);
+
+                /* langsung pilih kode pos desa ini jika ada */
+                if (found && found.postal_code) {
+                    selPostalCode.selectItem(found.postal_code, found.postal_code);
+                }
+            }
+        },
+        onClear: () => selPostalCode.disable(),
+    });
+
+    const selPostalCode = WilayahSelect({
+        wrapId: 'wrap-postal_code', btnId: 'postal_code-btn', hiddenId: 'postal_code',
+        searchPlaceholder: 'Otomatis dari desa…',
+    });
+
+    /* ── Load provinces on page load ── */
+    (async () => {
+        try {
+            const data = await apiFetch('/provinces.json');
+            selProvince.enable(Array.isArray(data) ? data : []);
+        } catch(e) {
+            console.error('Gagal memuat daftar provinsi:', e);
+        }
+    })();
+
+    /* ── Restore labels for old() repopulation ── */
+    selProvince.restoreLabel();
+    selCity.restoreLabel();
+    selDistrict.restoreLabel();
+    selVillage.restoreLabel();
+    selPostalCode.restoreLabel();
+
+    /* ════════════════════════════════════════════════════════════════
+       PACKAGE BY WILAYAH - fetch from layanan.jernih.net.id
+    ════════════════════════════════════════════════════════════════ */
+    const packageListEl = document.getElementById('package-list');
+    const packageEmptyEl = document.getElementById('package-empty');
+    const packageLoadingEl = document.getElementById('package-loading');
+    const packageNameInput = document.getElementById('package_name');
+    const packagePriceInput = document.getElementById('package_price');
+    let currentPackages = [];
+
+    function formatRupiah(angka) {
+        if (angka == null) return 'Rp 0';
+        const num = typeof angka === 'string' ? angka.replace(/[^0-9]/g, '') : angka;
+        if (num === '' || isNaN(num)) return 'Rp ' + angka;
+        return 'Rp ' + Number(num).toLocaleString('id-ID');
+    }
+
+    async function fetchPackagesByWilayah(kabupaten) {
+        if (!kabupaten || !packageListEl) return;
+        packageLoadingEl.style.display = 'block';
+        packageEmptyEl.style.display = 'none';
+        packageListEl.innerHTML = '';
+        currentPackages = [];
+
+        const cleanWilayah = kabupaten.replace(/\b(kabupaten|kota)\b/gi, '').replace(/\s+/g, ' ').trim();
+
+        try {
+            let url = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(cleanWilayah || kabupaten);
+            let res = await fetch(url);
+            let json = await res.json();
+            let data = json.data || [];
+
+            if (!data.length && cleanWilayah && cleanWilayah.toLowerCase() !== kabupaten.toLowerCase()) {
+                url = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(kabupaten);
+                res = await fetch(url);
+                json = await res.json();
+                data = json.data || [];
+            }
+
+            currentPackages = data;
+            if (!data.length) {
+                packageEmptyEl.style.display = 'block';
+                return;
+            }
+            packageListEl.innerHTML = data.map(pkg => {
+                const id = pkg.id;
+                const name = pkg.nama_paket || pkg.name || '';
+                const price = formatRupiah(pkg.harga || pkg.price);
+                const speed = pkg.kecepatan ? pkg.kecepatan + ' Mbps' : name;
+                return `<div class="col-xl col-lg-4 col-md-4 col-6 package-card">
+                    <label class="package-option">
+                        <input type="radio" name="package" value="${escHtml(id)}" data-name="${escHtml(name)}" data-price="${escHtml(price)}" required>
+                        <span class="package-option__body">
+                            <span class="package-option__check">
+                                <svg viewBox="0 0 12 12" fill="none"><path d="M2 6.2 4.6 9 10 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            <span class="d-block fz-font-label neutral-500 mb-2">PAKET FIBER</span>
+                            <span class="package-option__speed d-block">${escHtml(speed)}</span>
+                            <span class="package-option__price d-block fw-600">${escHtml(price)} <small>/bulan</small></span>
+                        </span>
+                    </label>
+                </div>`;
+            }).join('');
+            packageListEl.querySelectorAll('input[name="package"]').forEach(r => {
+                r.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        if (packageNameInput) packageNameInput.value = e.target.dataset.name || '';
+                        if (packagePriceInput) packagePriceInput.value = e.target.dataset.price || '';
+                    }
+                });
+            });
+        } catch (e) {
+            console.error('Gagal memuat paket:', e);
+            packageEmptyEl.style.display = 'block';
+            packageEmptyEl.querySelector('p').textContent = 'Gagal memuat paket. Silakan coba lagi.';
+        } finally {
+            packageLoadingEl.style.display = 'none';
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       PACKAGE VISIBILITY — tampil setelah alamat lengkap + fetch by kabupaten
+    ════════════════════════════════════════════════════════════════ */
+    const addressFieldIds = ['address', 'rt', 'rw', 'village', 'district', 'city', 'province'];
+    const addressFields   = addressFieldIds.map(id => document.getElementById(id));
+    const packageSection  = document.getElementById('package-section');
+    const addressNote     = document.getElementById('package-address-note');
+    const cityInputHidden = document.getElementById('city');
+
+    function updatePackages() {
+        const addressComplete = addressFields.every(f => f && f.value.trim());
+        if (packageSection) packageSection.classList.toggle('is-ready', addressComplete);
+        if (addressNote) addressNote.style.display = addressComplete ? 'none' : 'flex';
+        if (addressComplete && cityInputHidden && cityInputHidden.value && packageListEl) {
+            fetchPackagesByWilayah(cityInputHidden.value);
+        } else if (!addressComplete) {
+            if (packageListEl) packageListEl.innerHTML = '';
+            if (packageEmptyEl) packageEmptyEl.style.display = 'none';
+            if (packageLoadingEl) packageLoadingEl.style.display = 'none';
+            if (packageNameInput) packageNameInput.value = '';
+            if (packagePriceInput) packagePriceInput.value = '';
+        }
+    }
+
+    addressFields.forEach(f => f && f.addEventListener('change', updatePackages));
+    const addrEl = document.getElementById('address');
+    const rtEl = document.getElementById('rt');
+    const rwEl = document.getElementById('rw');
+    if (addrEl) addrEl.addEventListener('input', updatePackages);
+    if (rtEl) rtEl.addEventListener('input', updatePackages);
+    if (rwEl) rwEl.addEventListener('input', updatePackages);
+    if (cityInputHidden) cityInputHidden.addEventListener('change', updatePackages);
+    updatePackages();
+    const locationButton  = document.getElementById('get-location');
+    const locationStatus  = document.getElementById('location-status');
+    const locationMap     = document.getElementById('location-map');
+    const locationMapWrap = document.getElementById('location-map-wrap');
+    const latitude        = document.getElementById('latitude');
+    const longitude       = document.getElementById('longitude');
+    const markerIcon = new L.Icon.Default();
+
+    let map, marker;
+
+    function showMap(lat, lng) {
+        const coordinates = [Number(lat), Number(lng)];
+        locationMapWrap.classList.add('is-visible');
+        if (!map) {
+            map = L.map(locationMap, { scrollWheelZoom: false }).setView(coordinates, 15);
+            map.attributionControl.setPrefix('JernihNet Maps');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>'
+            }).addTo(map);
+            marker = L.marker(coordinates, { draggable: true, icon: markerIcon }).addTo(map);
+            map.on('click', event => setLocation(event.latlng.lat, event.latlng.lng));
+            marker.on('dragend', event => {
+                const point = event.target.getLatLng();
+                setLocation(point.lat, point.lng);
+            });
+        } else {
+            marker.setLatLng(coordinates);
+            map.setView(coordinates, 15);
+        }
+        setTimeout(() => map.invalidateSize(), 100);
+        locationStatus.classList.add('is-success');
+    }
+
+    function setLocation(lat, lng) {
+        const preciseLat = Number(lat).toFixed(6);
+        const preciseLng = Number(lng).toFixed(6);
+        latitude.value  = preciseLat;
+        longitude.value = preciseLng;
+        showMap(preciseLat, preciseLng);
+    }
+
+    if (latitude.value && longitude.value) showMap(latitude.value, longitude.value);
+
+    function captureCurrentLocation() {
+        if (!navigator.geolocation) { locationStatus.textContent = 'Browser ini belum mendukung pelacakan lokasi.'; return; }
+        locationStatus.classList.remove('is-success');
+        locationStatus.textContent = 'Mengambil titik lokasi saat ini dengan akurasi tinggi...';
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const lat = position.coords.latitude.toFixed(6);
+            const lng = position.coords.longitude.toFixed(6);
+            const accuracy = Math.round(position.coords.accuracy);
+            setLocation(lat, lng);
+            locationStatus.textContent = `Titik lokasi saat ini berhasil ditandai (akurasi sekitar ${accuracy} meter).`;
+        }, function () {
+            locationStatus.textContent = 'Lokasi belum dapat diambil. Izinkan akses lokasi pada browser lalu coba kembali.';
+        }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+    }
+
+    locationButton.addEventListener('click', captureCurrentLocation);
+    captureCurrentLocation();
+});
 </script>
 @endpush
