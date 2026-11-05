@@ -81,8 +81,8 @@
                                 <p class="neutral-500 mb-4">Mulai dari formulir registrasi. Tim JernihNet akan memproses permohonan dan menghubungi Anda.</p>
                                 <a class="at-btn" href="{{ route('registration.create') }}">
                                     <span>
-                                        <span class="text-1">MULAI REGISTRASI</span>
-                                        <span class="text-2">MULAI REGISTRASI</span>
+                                        <span class="text-1">DAFTAR SEKARANG</span>
+                                        <span class="text-2">DAFTAR SEKARANG</span>
                                     </span>
                                 </a>
                             </div>
@@ -390,6 +390,49 @@
                     </div>
                 </div>
                 <!--End Home 2 Section 3-->
+                  <!--Home 4 Section 6-->
+                <div class="sec-6-home-4 pt-120 pb-120">
+                    <div class="container">
+                        <div class="at-banner-thumb fix w-100 scale-up-img p-relative changeless d-none d-lg-block">
+                            <img data-speed="0.4" class="img-cover scale-up" src="{{ asset('assets/imgs/pages/paralax.jpg') }}" alt="jernihnet">
+                            <div class="position-absolute top-0 bottom-0 start-0 end-0">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between pt-100">
+                                                <div class="at-header-logo">
+                                                 
+                                                </div>
+                                                <a class="bg-transparent border px-3 py-1 rounded-pill common-white fz-font-lg" href="#">Local time: 12:30</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-250 align-items-end">
+                                        <div class="col-lg-5 col-md-6">
+                                            <h2 class="common-white">Koneksi Jernih, <br> Komunikasi Terpercaya</h2>
+                                            <div class="d-flex gap-4 align-items-center pt-30">
+                                                <a class="at-btn at-btn-border-white common-white rounded-0" href="{{ route('contact') }}">
+                                                    <span>
+                                                        <span class="text-1">Hubungi Kami</span>
+                                                        <span class="text-2">Hubungi Kami</span>
+                                                    </span>
+                                                    <i>
+                                                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor" /></svg>
+                                                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor" /></svg>
+                                                    </i>
+                                                </a>
+                                                <span class="common-white fz-font-sm">[ Senin–Sabtu 08.00–16.30 ]</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6 ms-auto text-end">
+                                            <span class="common-white fz-font-lg">[ Penyedia layanan teknologi informasi &amp; sistem integrator jaringan terpercaya di Indonesia sejak 2005. Koneksi stabil dan dukungan responsif untuk rumah, usaha, hingga enterprise. ]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Home 4 Section 4 -->
                 <div class="container-2200">
                     <div class="rounded-5 mx-lg-3 mx-2 bg-neutral-50 overflow-hidden pb-lg-5">
@@ -575,7 +618,7 @@
                     </div>
                 </div>
                 <!--Home 2 Section 12-->
-                <div class="container-2200">
+                <!-- <div class="container-2200">
                     <div class="home-2-section-12 rounded-5 overflow-hidden mx-lg-3 mx-2 mt-50 p-relative pt-100 pb-100" id="paket-layanan">
                         <div class="p-absolute top-0 left-0 w-100 h-100 rounded-5 opacity-10 z-0" data-background="assets/imgs/pages/noise.gif"></div>
                         <div class="container p-relative z-1">
@@ -725,50 +768,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!--Home 4 Section 6-->
-                <div class="sec-6-home-4 pt-120 pb-120">
-                    <div class="container">
-                        <div class="at-banner-thumb fix w-100 scale-up-img p-relative changeless d-none d-lg-block">
-                            <img data-speed="0.4" class="img-cover scale-up" src="{{ asset('assets/imgs/pages/paralax.jpg') }}" alt="jernihnet">
-                            <div class="position-absolute top-0 bottom-0 start-0 end-0">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="d-flex justify-content-between pt-100">
-                                                <div class="at-header-logo">
-                                                 
-                                                </div>
-                                                <a class="bg-transparent border px-3 py-1 rounded-pill common-white fz-font-lg" href="#">Local time: 12:30</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row pt-250 align-items-end">
-                                        <div class="col-lg-5 col-md-6">
-                                            <h2 class="common-white">Koneksi Jernih, <br> Komunikasi Terpercaya</h2>
-                                            <div class="d-flex gap-4 align-items-center pt-30">
-                                                <a class="at-btn at-btn-border-white common-white rounded-0" href="{{ route('contact') }}">
-                                                    <span>
-                                                        <span class="text-1">Hubungi Kami</span>
-                                                        <span class="text-2">Hubungi Kami</span>
-                                                    </span>
-                                                    <i>
-                                                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor" /></svg>
-                                                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.21967 9.40717C-0.0732232 9.70006 -0.0732232 10.1749 0.21967 10.4678C0.512563 10.7607 0.987437 10.7607 1.28033 10.4678L0.21967 9.40717ZM10.6875 0.75C10.6875 0.335786 10.3517 2.97145e-09 9.9375 1.50485e-07L3.1875 -2.70983e-07C2.77329 -2.70983e-07 2.4375 0.335786 2.4375 0.75C2.4375 1.16421 2.77329 1.5 3.1875 1.5H9.1875V7.5C9.1875 7.91421 9.52329 8.25 9.9375 8.25C10.3517 8.25 10.6875 7.91421 10.6875 7.5L10.6875 0.75ZM0.75 9.9375L1.28033 10.4678L10.4678 1.28033L9.9375 0.75L9.40717 0.21967L0.21967 9.40717L0.75 9.9375Z" fill="currentColor" /></svg>
-                                                    </i>
-                                                </a>
-                                                <span class="common-white fz-font-sm">[ Senin–Sabtu 08.00–16.30 ]</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-md-6 ms-auto text-end">
-                                            <span class="common-white fz-font-lg">[ Penyedia layanan teknologi informasi &amp; sistem integrator jaringan terpercaya di Indonesia sejak 2005. Koneksi stabil dan dukungan responsif untuk rumah, usaha, hingga enterprise. ]</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </div> -->
+              
                 {{-- <!--Home 4 Section 8 temporarily disabled -->
                 <div class="home-4-section-8 bg-cover pt-120 pb-120">
                     <div class="container">

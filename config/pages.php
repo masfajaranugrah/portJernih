@@ -99,6 +99,14 @@ return [
         'backtotop' => true,
         'scripts' => [],
     ],
+    'panduan' => [
+        'title' => "Panduan Pelanggan - Kendala Teknis - JernihNet",
+        'header' => 'standard',
+        'footer' => 'standard',
+        'body' => 'at-magic-cursor',
+        'backtotop' => true,
+        'scripts' => [],
+    ],
     'faqs' => [
         'title' => "Orisa - Creative Agency & Portfolio HTML Template",
         'header' => 'standard',

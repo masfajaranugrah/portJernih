@@ -66,6 +66,7 @@
                                             <li class="mb-15"><a href="{{ route('home') }}">Home</a></li>
                                             <li class="mb-15"><a href="{{ route('about') }}">About</a></li>
                                             <li class="mb-15"><a href="{{ route('contact') }}">Contact</a></li>
+                                            <li class="mb-15"><a href="{{ route('panduan') }}">Panduan</a></li>
                                         </ul>
                                     </div>
                                 </div>

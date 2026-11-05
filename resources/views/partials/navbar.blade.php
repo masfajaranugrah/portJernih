@@ -49,6 +49,9 @@
                                         <li>
                                             <a href="{{ route('contact') }}">Contact</a>
                                         </li>
+                                        <li>
+                                            <a href="{{ route('panduan') }}">Panduan</a>
+                                        </li>
                                         <li class="d-xl-none">
                                             <a href="{{ route('registration.create') }}">Registrasi</a>
                                         </li>

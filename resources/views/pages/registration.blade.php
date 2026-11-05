@@ -53,6 +53,15 @@
         [data-bs-theme="dark"] .package-option input:focus-visible + .package-option__body { outline-color: rgba(255,255,255,.7); }
         .registration-submit { border: 0; width: 100%; justify-content: center; }
         .registration-page .invalid-feedback { font-size: .8rem; }
+        .ketentuan-list { counter-reset: ketentuan; display: grid; gap: 12px; list-style: none; margin: 18px 0 0; padding: 0; }
+        .ketentuan-list li { counter-increment: ketentuan; color: var(--at-neutral-500, #6b7280); font-size: .85rem; line-height: 1.6; overflow-wrap: anywhere; padding-left: 32px; position: relative; }
+        .ketentuan-list li::before { align-items: center; background: #101c2d; border-radius: 50%; color: #fff; content: counter(ketentuan); display: flex; font-size: 11px; font-weight: 700; height: 20px; justify-content: center; left: 0; line-height: 1; position: absolute; top: 1px; width: 20px; }
+        .ketentuan-list strong { color: #101c2d; font-weight: 700; }
+        .ketentuan-panduan-link { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+        .ketentuan-panduan-link:hover { color: #101c2d; }
+        [data-bs-theme="dark"] .ketentuan-list li::before { background: #fff; color: #101c2d; }
+        [data-bs-theme="dark"] .ketentuan-panduan-link:hover { color: #fff; }
+        [data-bs-theme="dark"] .ketentuan-list strong { color: #fff; }
         @media (max-width: 575px) { .registration-form { padding: 25px !important; } }
 
         /* ── Wilayah Dropdown ─────────────────────────────────────────── */
@@ -378,8 +387,14 @@
                     </div>
 
                     <div class="registration-section" id="ketentuan">
-                        <div class="form-check"><input class="form-check-input @error('terms') is-invalid @enderror" type="checkbox" id="terms" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} required><label class="form-check-label ms-2" for="terms">Saya menyetujui,  pendaftaran JernihNet.</label>@error('terms')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                        <p id="ketentuan-detail" class="small neutral-500 mt-3 mb-0">Saya menyetujui seluruh persyaratan dan ketentuan berlangganan layanan JernihNet PT. Jernih Multi Komunikasi (JMK), termasuk ketentuan pembayaran, jatuh tempo, penanganan gangguan teknis, masa kontrak minimal 12 bulan, perpanjangan berlangganan, serta ketentuan denda apabila berhenti berlangganan sebelum masa kontrak berakhir. Saya memahami bahwa data yang diberikan digunakan untuk keperluan administrasi, verifikasi, dan proses pemasangan layanan. Dengan mengajukan pendaftaran, saya menyatakan telah membaca, memahami, dan bersedia mematuhi seluruh ketentuan yang berlaku.</p>
+                        <div class="form-check"><input class="form-check-input @error('terms') is-invalid @enderror" type="checkbox" id="terms" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} required><label class="form-check-label ms-2" for="terms">Saya menyetujui syarat dan ketentuan pendaftaran JernihNet.</label>@error('terms')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                        <ol id="ketentuan-detail" class="ketentuan-list">
+                            <li><strong>Perangkat telekomunikasi dan kabel jaringan dipinjamkan</strong> oleh PT Jernih Multi Komunikasi. Ketentuan perangkat lainnya dijelaskan pada kontrak kerja sama.</li>
+                            <li>Apabila terjadi kerusakan pada perangkat yang dipinjamkan atau perangkat hilang yang disebabkan oleh kelalaian pelanggan, pelanggan wajib <strong>membayar ganti rugi sebesar harga perangkat</strong> kepada PT Jernih Multi Komunikasi.</li>
+                            <li>Kontrak berlangganan <strong>minimal 12 bulan</strong>. Apabila pada bulan ke-11 pelanggan tidak mengajukan berhenti berlangganan, maka dianggap lanjut perpanjangan sampai dengan <strong>24 bulan</strong>. Apabila berhenti berlangganan sepihak sebelum kontrak habis dengan alasan apa pun, pelanggan dikenakan <strong>penalti membayar denda 50% dari biaya berlangganan</strong> dan <strong>perangkat diambil oleh pihak PT. JMK</strong>.</li>
+                            <li>Pelanggan bersedia <strong>membayar biaya langganan tepat waktu</strong>. Apabila terlambat, akan dikenakan <strong>limitasi</strong>, namun biaya berlangganan tetap dikenakan <strong>tarif normal walaupun dilimitasi</strong>.</li>
+                        </ol>
+                        <p class="small neutral-500 mt-3 mb-0">Ada kendala teknis atau ingin tahu ketentuan lebih lengkap? Baca <a href="{{ route('panduan') }}" class="ketentuan-panduan-link">Panduan Pelanggan</a>.</p>
                     </div>
                     <div class="mt-4"><button class="at-btn registration-submit" type="submit"><span><span class="text-1">KIRIM PENDAFTARAN</span><span class="text-2">KIRIM PENDAFTARAN</span></span></button></div>
         </form>
