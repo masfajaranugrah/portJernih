@@ -18,7 +18,8 @@ class ChatbotTest extends TestCase
 
         $response->assertOk();
         $this->assertStringContainsString('registrasi', $response->json('reply'));
-        $this->assertStringContainsString('08123124213', $response->json('reply'));
+        $this->assertStringContainsString('0823232287897', $response->json('reply'));
+        $this->assertStringContainsString('081818461122', $response->json('reply'));
         Http::assertNothingSent();
     }
 
@@ -82,7 +83,8 @@ class ChatbotTest extends TestCase
         ]);
 
         $response->assertStatus(503);
-        $this->assertStringContainsString('08123124213', $response->json('error'));
+        $this->assertStringContainsString('0823232287897', $response->json('error'));
+        $this->assertStringContainsString('081818461122', $response->json('error'));
         Http::assertNothingSent();
     }
 }

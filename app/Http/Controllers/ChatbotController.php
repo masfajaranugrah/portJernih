@@ -30,7 +30,7 @@ INFORMASI RESMI DARI WEBSITE (jadikan satu-satunya sumber jawaban):
   paket, dan unggah foto KTP. Setelah itu tim akan melakukan survei lokasi
   dan menjadwalkan pemasangan.
 - Pertanyaan seputar pemasangan / ingin pasang baru: arahkan menghubungi
-  nomor pemasangan 08123124213 (telepon/WhatsApp).
+  nomor 0823232287897 atau 081818461122 (telepon/WhatsApp).
 - Kantor: Belang Wetan, Kecamatan Klaten Utara, Kabupaten Klaten,
   Jawa Tengah 57438.
 - Jam operasional: Senin–Sabtu, 08.00–16.30 WIB. Dukungan teknis tersedia 24/7.
@@ -43,8 +43,8 @@ ATURAN MENJAWAB:
 - Jawab ramah, sopan, singkat, dan jelas dalam Bahasa Indonesia (maks. 150 kata).
 - Gunakan hanya informasi di atas. Jangan mengarang harga, promo, cakupan
   wilayah, jadwal, atau kebijakan yang tidak disebutkan.
-- Jika pertanyaan menyangkut pemasangan, sebutkan nomor 08123124213 dan
-  sarankan mengisi halaman registrasi.
+- Jika pertanyaan menyangkut pemasangan, sebutkan nomor 0823232287897 atau
+  081818461122 dan sarankan mengisi halaman registrasi.
 - Jika pertanyaan di luar informasi di atas (mis. tagihan pribadi, gangguan
   spesifik, data pelanggan), katakan dengan jujur bahwa kamu belum punya
   datanya dan arahkan ke halaman /contact atau nomor yang tersedia.
@@ -74,7 +74,7 @@ PROMPT;
 
         if (blank($apiKey)) {
             return response()->json([
-                'error' => 'Asisten AI sedang tidak tersedia. Silakan hubungi 08123124213 atau buka halaman Kontak.',
+                'error' => 'Asisten AI sedang tidak tersedia. Silakan hubungi 0823232287897 atau 081818461122, atau buka halaman Kontak.',
             ], 503);
         }
 
@@ -138,11 +138,11 @@ PROMPT;
         );
 
         if ($has(['daftar', 'registrasi', 'pendaftaran', 'pasang', 'pemasangan', 'survei', 'survey', 'nik'])) {
-            return 'Untuk pendaftaran, buka halaman /registrasi lalu isi nama, NIK 16 digit, nomor WhatsApp, alamat pemasangan, titik lokasi, pilih paket, dan unggah foto KTP. Setelah itu tim kami melakukan survei lokasi dan menghubungi Anda. Untuk pertanyaan pemasangan, hubungi 08123124213 (telepon/WhatsApp).';
+            return 'Untuk pendaftaran, buka halaman /registrasi lalu isi nama, NIK 16 digit, nomor WhatsApp, alamat pemasangan, titik lokasi, pilih paket, dan unggah foto KTP. Setelah itu tim kami melakukan survei lokasi dan menghubungi Anda. Untuk pertanyaan pemasangan, hubungi 0823232287897 atau 081818461122 (telepon/WhatsApp).';
         }
 
         if ($has(['harga', 'biaya', 'tarif', 'paket', 'mbps', 'promo', 'murah'])) {
-            return 'Harga internet JernihNet mulai dari Rp 120.000/bulan. Harga dan paket bisa berbeda tergantung kecepatan dan wilayah. Daftar paket yang tersedia muncul di halaman /registrasi setelah alamat dan wilayah diisi. Untuk info pemasangan, hubungi 08123124213.';
+            return 'Harga internet JernihNet mulai dari Rp 120.000/bulan. Harga dan paket bisa berbeda tergantung kecepatan dan wilayah. Daftar paket yang tersedia muncul di halaman /registrasi setelah alamat dan wilayah diisi. Untuk info pemasangan, hubungi 0823232287897 atau 081818461122.';
         }
 
         if ($has(['wilayah', 'jangkauan', 'area', 'klaten', 'yogyakarta', 'jogja', 'gunung kidul', 'sragen', 'sukoharjo', 'boyolali'])) {
@@ -150,12 +150,12 @@ PROMPT;
         }
 
         if ($has(['gangguan', 'rusak', 'lambat', 'lemot', 'mati', 'error', 'kendala', 'putus', 'tidak bisa', 'bermasalah'])) {
-            return 'Untuk gangguan teknis, tim dukungan kami siap membantu 24/7. Silakan hubungi 08123124213 atau buka halaman /contact agar tim kami bisa menindaklanjuti.';
+            return 'Untuk gangguan teknis, tim dukungan kami siap membantu 24/7. Silakan hubungi 0823232287897 atau 081818461122, atau buka halaman /contact agar tim kami bisa menindaklanjuti.';
         }
 
         if ($has(['kontak', 'hubungi', 'telepon', 'telp', 'whatsapp', 'nomor', 'email', 'alamat', 'kantor', 'jam operasional'])
             || preg_match('/\b(wa|jam buka|jam kerja)\b/', $text)) {
-            return 'Kantor JernihNet: Belang Wetan, Kec. Klaten Utara, Kabupaten Klaten, Jawa Tengah 57438. Jam operasional Senin–Sabtu 08.00–16.30 WIB. Telepon kantor (62) 857 4147 5779, email admin@jernihmultikomunikasi.net.id. Untuk pemasangan, hubungi 08123124213.';
+            return 'Kantor JernihNet: Belang Wetan, Kec. Klaten Utara, Kabupaten Klaten, Jawa Tengah 57438. Jam operasional Senin–Sabtu 08.00–16.30 WIB. Telepon kantor (62) 857 4147 5779, email admin@jernihmultikomunikasi.net.id. Untuk pemasangan, hubungi 0823232287897 atau 081818461122.';
         }
 
         if ($has(['layanan', 'jasa', 'service', 'cctv', 'jaringan', 'fiber', 'wifi', 'internet'])) {
@@ -186,8 +186,8 @@ PROMPT;
         ));
 
         $message = $isQuota
-            ? 'Asisten AI sedang nonaktif sementara. Silakan hubungi kami melalui halaman Kontak.'
-            : 'Layanan AI sedang bermasalah. Silakan coba lagi.';
+            ? 'Asisten AI sedang nonaktif sementara. Silakan hubungi 0823232287897 atau 081818461122.'
+            : 'Layanan AI sedang bermasalah. Silakan hubungi 0823232287897 atau 081818461122, atau coba lagi.';
 
         return response()->json(['error' => $message], $status);
     }

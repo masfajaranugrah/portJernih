@@ -74,7 +74,7 @@
             addMessage('Halo! Selamat datang di website Jernih Multi Komunikasi 👋 Saya asisten AI. Ada yang bisa saya bantu, misalnya seputar layanan internet, pemasangan, atau cara menghubungi kami?', 'bot');
             pushHistory('assistant', 'Halo! Ada yang bisa saya bantu?');
         }
-        input.focus();
+        input.focus({ preventScroll: true });
     }
 
     function closePanel() {
@@ -145,7 +145,7 @@
         .finally(function () {
             input.disabled = false;
             if (sendBtn) sendBtn.disabled = false;
-            input.focus();
+            input.focus({ preventScroll: true });
         });
     }
 
