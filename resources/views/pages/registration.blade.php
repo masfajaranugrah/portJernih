@@ -226,25 +226,6 @@
                             @error('ktp_photo')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                         </div>
 
-                        {{-- ── Modal Kamera ── --}}
-                        <div id="ktp-camera-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
-                            <div style="width:min(100%,520px);padding:16px">
-                                <video id="ktp-video" autoplay playsinline muted
-                                       style="width:100%;border-radius:8px;background:#000;max-height:60vh;object-fit:cover"></video>
-                                <canvas id="ktp-canvas" style="display:none"></canvas>
-                                <div class="d-flex gap-3 mt-3 justify-content-center">
-                                    <button type="button" id="ktp-capture-btn"
-                                            class="at-btn" style="min-width:160px">
-                                        <span><span class="text-1">📸 AMBIL FOTO</span><span class="text-2">📸 AMBIL FOTO</span></span>
-                                    </button>
-                                    <button type="button" id="ktp-camera-close"
-                                            class="at-btn at-btn--border" style="min-width:120px;color:#fff;border-color:rgba(255,255,255,.5)">
-                                        <span><span class="text-1">BATAL</span><span class="text-2">BATAL</span></span>
-                                    </button>
-                                </div>
-                                <p id="ktp-camera-error" style="color:#f87171;font-size:.85rem;text-align:center;margin-top:10px;display:none"></p>
-                            </div>
-                        </div>
                         <div class="col-md-6"><label class="form-label" for="phone">NOMOR TELEPON / WHATSAPP *</label><input class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" inputmode="tel" required>@error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="col-md-6"><label class="form-label" for="email">EMAIL <span class="fw-normal text-lowercase">(opsional)</span></label><input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                     </div>
@@ -402,6 +383,29 @@
                     <div class="mt-4"><button class="at-btn registration-submit" type="submit"><span><span class="text-1">KIRIM PENDAFTARAN</span><span class="text-2">KIRIM PENDAFTARAN</span></span></button></div>
         </form>
     </section>
+
+    {{-- ── Modal Kamera KTP — di luar form agar tidak ikut scroll ── --}}
+    <div id="ktp-camera-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:12px;width:min(94vw,440px);overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+            {{-- header --}}
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(20,29,43,.1)">
+                <span style="font-weight:700;font-size:.9rem;letter-spacing:.04em">📷 FOTO KTP</span>
+                <button type="button" id="ktp-camera-close" style="background:none;border:none;font-size:1.4rem;line-height:1;cursor:pointer;color:#666;padding:0">&times;</button>
+            </div>
+            {{-- video --}}
+            <div style="position:relative;background:#000;aspect-ratio:4/3;overflow:hidden">
+                <video id="ktp-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block"></video>
+                <p id="ktp-camera-error" style="display:none;position:absolute;inset:0;margin:0;color:#f87171;font-size:.85rem;text-align:center;padding:20px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7)"></p>
+            </div>
+            {{-- footer --}}
+            <div style="padding:16px 18px;text-align:center">
+                <button type="button" id="ktp-capture-btn" class="at-btn" style="width:100%">
+                    <span><span class="text-1">📸 AMBIL FOTO</span><span class="text-2">📸 AMBIL FOTO</span></span>
+                </button>
+            </div>
+        </div>
+        <canvas id="ktp-canvas" style="display:none"></canvas>
+    </div>
 </main>
 @endsection
 
@@ -897,13 +901,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function closeCamera() {
             stopStream();
-            modal.style.display = 'none';
+            modal.style.display    = 'none';
             camError.style.display = 'none';
+            document.body.style.overflow = '';
         }
 
         openCamBtn.addEventListener('click', async () => {
+            /* pindah modal ke body agar position:fixed benar-benar relatif viewport */
+            if (modal.parentElement !== document.body) {
+                document.body.appendChild(modal);
+            }
+            document.body.style.overflow = 'hidden';   // lock scroll
             modal.style.display = 'flex';
             camError.style.display = 'none';
+            camError.textContent   = '';
             try {
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -911,8 +922,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 video.srcObject = stream;
             } catch (err) {
-                camError.textContent = 'Kamera tidak dapat diakses. Pastikan izin kamera sudah diberikan.';
-                camError.style.display = 'block';
+                camError.textContent   = 'Kamera tidak dapat diakses. Pastikan izin kamera sudah diberikan.';
+                camError.style.display = 'flex';
             }
         });
 
