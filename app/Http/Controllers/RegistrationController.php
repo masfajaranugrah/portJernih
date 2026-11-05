@@ -161,6 +161,8 @@ class RegistrationController extends Controller
                     'kabupaten'        => $validated['city'],
                     'provinsi'         => $validated['province'],
                     'kode_pos'         => $validated['postal_code'] ?? null,
+                    'latitude'         => isset($validated['latitude']) ? (float) $validated['latitude'] : null,
+                    'longitude'        => isset($validated['longitude']) ? (float) $validated['longitude'] : null,
                 ]);
         } catch (ConnectionException $exception) {
             report($exception);
