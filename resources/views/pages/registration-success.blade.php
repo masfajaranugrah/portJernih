@@ -31,7 +31,7 @@
             <p class="neutral-500 mb-3">Silakan masuk ke dashboard Anda menggunakan nomor telepon yang didaftarkan.</p>
             <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
                 <a class="at-btn justify-content-center" href="https://layanan.jernih.net.id" target="_blank" rel="noopener"><span><span class="text-1">MASUK KE DASHBOARD</span><span class="text-2">MASUK KE DASHBOARD</span></span></a>
-                <a class="at-btn justify-content-center" href="https://wa.me/6281818461122?text={{ $whatsappText }}" target="_blank" rel="noopener"><span><span class="text-1">HUBUNGI ADMIN VIA WHATSAPP</span><span class="text-2">HUBUNGI ADMIN VIA WHATSAPP</span></span></a>
+                <a class="at-btn justify-content-center" href="https://wa.me/6281818461122?text={{ $whatsappText }}" target="_blank" rel="noopener"><span><span class="text-1">HUBUNGI SALES VIA WHATSAPP</span><span class="text-2">HUBUNGI SALES VIA WHATSAPP</span></span></a>
                 <a class="at-btn success-back justify-content-center" href="{{ route('home') }}"><span><span class="text-1">KEMBALI KE BERANDA</span><span class="text-2">KEMBALI KE BERANDA</span></span></a>
             </div>
         </div>
