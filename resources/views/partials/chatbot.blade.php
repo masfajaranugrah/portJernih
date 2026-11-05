@@ -1,5 +1,10 @@
 {{-- Widget Chatbot melayang (kecil & independen dari template Orisa) --}}
 <div class="chatbot" id="chatbot" aria-live="polite">
+    <div class="chatbot-teaser" id="chatbot-teaser" role="status">
+        <span class="chatbot-teaser__text">Butuh bantuan?</span>
+        <span class="chatbot-teaser__wave" aria-hidden="true">👋</span>
+    </div>
+
     <button type="button" class="chatbot-toggle" id="chatbot-toggle" aria-expanded="false" aria-label="Buka chatbot">
         <span class="chatbot-toggle-icon chatbot-toggle-icon--chat" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>

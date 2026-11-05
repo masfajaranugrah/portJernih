@@ -20,5 +20,5 @@
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
-    {{-- Chatbot di-sembunyikan sementara. {{ asset('assets/css/chatbot.css') }} --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/chatbot.css') }}">
 </head>

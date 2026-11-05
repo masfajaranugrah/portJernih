@@ -144,27 +144,17 @@
                                 <ul class="list-unstyled navigation-section-10">
                                     <li>
                                         <div class="icon-shape size-60 rounded-2 fix">
-                                            <img class="img-cover" src="assets/imgs/template/avatar/avatar-10.webp" alt="jernihnet">
+                                            <img class="img-cover" src="assets/imgs/pages/gambar/teknisi-1.jpeg" alt="Teknisi JernihNet memasang jaringan" loading="lazy">
                                         </div>
                                     </li>
                                     <li>
                                         <div class="icon-shape size-60 rounded-2 fix">
-                                            <img class="img-cover" src="assets/imgs/template/avatar/avatar-11.webp" alt="jernihnet">
+                                            <img class="img-cover" src="assets/imgs/pages/gambar/teknisi-2.jpeg" alt="Teknisi JernihNet melakukan perawatan jaringan" loading="lazy">
                                         </div>
                                     </li>
                                     <li>
                                         <div class="icon-shape size-60 rounded-2 fix">
-                                            <img class="img-cover" src="assets/imgs/template/avatar/avatar-12.webp" alt="jernihnet">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="icon-shape size-60 rounded-2 fix">
-                                            <img class="img-cover" src="assets/imgs/template/avatar/avatar-13.webp" alt="jernihnet">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="icon-shape size-60 rounded-2 fix">
-                                            <img class="img-cover" src="assets/imgs/template/avatar/avatar-14.webp" alt="jernihnet">
+                                            <img class="img-cover" src="assets/imgs/pages/gambar/teknisi-3.jpeg" alt="Teknisi JernihNet mengatur perangkat jaringan" loading="lazy">
                                         </div>
                                     </li>
                                 </ul>

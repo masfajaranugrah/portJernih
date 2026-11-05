@@ -19,4 +19,4 @@
     <script src="{{ asset('assets/js/throwable.js') }}"></script>
     <script src="{{ asset('assets/js/at-cursor.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
-    {{-- Chatbot di-sembunyikan sementara. {{ asset('assets/js/chatbot.js') }} --}}
+    <script src="{{ asset('assets/js/chatbot.js') }}"></script>

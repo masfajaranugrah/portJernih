@@ -16,6 +16,7 @@
     var body       = document.getElementById('chatbot-body');
     var form       = document.getElementById('chatbot-form');
     var input      = document.getElementById('chatbot-input');
+    var teaser     = document.getElementById('chatbot-teaser');
     var sendBtn    = form ? form.querySelector('.chatbot-send') : null;
 
     // Tidak ada elemen widget -> berhenti (misal halaman tanpa layout).
@@ -68,8 +69,9 @@
         root.classList.add('is-open');
         panel.hidden = false;
         toggleBtn.setAttribute('aria-expanded', 'true');
+        if (teaser) teaser.classList.remove('is-visible');
         if (body.children.length === 0) {
-            addMessage('Halo! Selamat datang di website Jernih Multi Komunikasi 👋 Saya asisten AI. Ada yang bisa saya bantu, misalnya seputar layanan atau cara menghubungi kami?', 'bot');
+            addMessage('Halo! Selamat datang di website Jernih Multi Komunikasi 👋 Saya asisten AI. Ada yang bisa saya bantu, misalnya seputar layanan internet, pemasangan, atau cara menghubungi kami?', 'bot');
             pushHistory('assistant', 'Halo! Ada yang bisa saya bantu?');
         }
         input.focus();
@@ -105,7 +107,13 @@
             body: JSON.stringify({ message: text, history: history })
         })
         .then(function (res) {
-            return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+            /* Baca sebagai teks dulu supaya respons HTML (mis. 419) tidak
+               membuat seluruh proses gagal, lalu coba parse JSON. */
+            return res.text().then(function (text) {
+                var data = {};
+                try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
+                return { ok: res.ok, status: res.status, data: data };
+            });
         })
         .then(function (result) {
             if (typing.parentNode) typing.remove();
@@ -113,7 +121,21 @@
                 addMessage(result.data.reply, 'bot');
                 pushHistory('assistant', result.data.reply);
             } else {
-                addMessage((result.data && result.data.error) || 'Maaf, terjadi kesalahan. Silakan coba lagi.', 'error');
+                var detail = null;
+                if (result.data && result.data.errors) {
+                    var firstError = Object.values(result.data.errors)[0];
+                    detail = Array.isArray(firstError) ? firstError[0] : firstError;
+                }
+
+                var message = (result.data && (result.data.error || result.data.message)) || detail;
+
+                if (!message) {
+                    message = result.status === 419
+                        ? 'Sesi halaman sudah kedaluwarsa. Silakan muat ulang halaman lalu coba lagi.'
+                        : 'Maaf, terjadi kesalahan. Silakan coba lagi.';
+                }
+
+                addMessage(message, 'error');
             }
         })
         .catch(function () {
@@ -131,6 +153,24 @@
     toggleBtn.addEventListener('click', function () {
         panel.hidden ? openPanel() : closePanel();
     });
+
+    /* Bubble "Butuh bantuan?" muncul dari ikon setelah beberapa detik */
+    if (teaser) {
+        teaser.addEventListener('click', openPanel);
+
+        var TEASER_KEY = 'jn_chat_teaser_seen';
+        var teaserSeen = false;
+
+        try { teaserSeen = sessionStorage.getItem(TEASER_KEY) === '1'; } catch (e) {}
+
+        if (!teaserSeen) {
+            window.setTimeout(function () {
+                if (panel.hidden) teaser.classList.add('is-visible');
+            }, 2600);
+
+            try { sessionStorage.setItem(TEASER_KEY, '1'); } catch (e) {}
+        }
+    }
 
     if (closeBtn) closeBtn.addEventListener('click', closePanel);
 

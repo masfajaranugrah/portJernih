@@ -32,8 +32,8 @@
         @include('partials.back-to-top')
     @endif
 
-    {{-- Widget chatbot di-sembunyikan sementara. Aktifkan kembali dgn menghapus komentar di bawah. --}}
-    {{-- @include('partials.chatbot') --}}
+    {{-- Widget chatbot melayang --}}
+    @include('partials.chatbot')
 
     @include('partials.scripts')
     @stack('scripts')
