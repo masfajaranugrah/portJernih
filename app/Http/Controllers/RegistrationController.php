@@ -10,6 +10,74 @@ use Illuminate\Support\Str;
 
 class RegistrationController extends Controller
 {
+    /**
+     * Batas ukuran foto KTP (dalam KB) yang benar-benar diterima PHP.
+     *
+     * Nilai 5 MB adalah batas aplikasi, tetapi PHP dapat menolak file yang
+     * lebih kecil dari itu (upload_max_filesize). Jika file melebihi batas
+     * PHP, Laravel melaporkan "failed to upload" tanpa penjelasan. Karena
+     * itu batas validasi diselaraskan dengan konfigurasi server.
+     */
+    private function maxUploadKb(): int
+    {
+        $maxKb = 5 * 1024;
+
+        $uploadMax = (int) ini_parse_quantity((string) ini_get('upload_max_filesize'));
+
+        if ($uploadMax > 0) {
+            $maxKb = min($maxKb, intdiv($uploadMax, 1024));
+        }
+
+        return max(256, $maxKb);
+    }
+
+    /**
+     * Ambil nama dan harga paket dari API publik agar rincian pendaftaran
+     * menampilkan harga sebenarnya, bukan "-".
+     *
+     * @return array{name: string, price: string}
+     */
+    private function resolvePackageDetails(string $packageId, string $city): array
+    {
+        $fallback = ['name' => 'Paket Internet', 'price' => '-'];
+
+        $wilayah = trim(preg_replace('/\b(kabupaten|kota)\b/i', '', $city));
+
+        try {
+            $response = Http::acceptJson()
+                ->timeout(config('services.jernih.timeout', 15))
+                ->get(config('services.jernih.package_url'), [
+                    'wilayah' => $wilayah !== '' ? $wilayah : $city,
+                ]);
+        } catch (ConnectionException $exception) {
+            report($exception);
+
+            return $fallback;
+        }
+
+        if ($response->failed()) {
+            return $fallback;
+        }
+
+        foreach ((array) $response->json('data', []) as $package) {
+            if ((string) ($package['id'] ?? '') !== $packageId) {
+                continue;
+            }
+
+            $speed = $package['kecepatan'] ?? null;
+            $price = $package['harga'] ?? null;
+
+            return [
+                'name'  => $speed !== null ? 'Paket ' . $speed . ' Mbps' : 'Paket Internet',
+                'price' => $price !== null
+                    ? 'Rp ' . number_format((float) $price, 0, ',', '.')
+                    : '-',
+            ];
+        }
+
+        return $fallback;
+    }
+
     public function create()
     {
         return view('pages.registration');
@@ -19,7 +87,8 @@ class RegistrationController extends Controller
     {
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:100'],
-            'ktp_photo'   => ['required', 'image', 'mimes:jpeg,jpg,png', 'max:5120'],
+            'nik'         => ['required', 'digits:16'],
+            'ktp_photo'   => ['required', 'image', 'mimes:jpeg,jpg,png', 'max:' . $this->maxUploadKb()],
             'phone'       => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
             'email'       => ['nullable', 'email', 'max:100'],
             'province'    => ['required', 'string', 'max:100'],
@@ -34,8 +103,17 @@ class RegistrationController extends Controller
             'longitude'   => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
             'package'     => ['required', 'string', 'uuid'],
             'terms'       => ['accepted'],
-        ], [], [
+        ], [
+            'nik.required'       => 'NIK wajib diisi.',
+            'nik.digits'         => 'NIK harus terdiri dari 16 digit angka.',
+            'ktp_photo.required' => 'Foto KTP wajib diunggah.',
+            'ktp_photo.uploaded' => 'Foto KTP gagal diunggah. Pastikan ukuran file tidak melebihi batas server, lalu coba unggah kembali.',
+            'ktp_photo.max'      => 'Ukuran foto KTP terlalu besar (maksimal :max KB).',
+            'ktp_photo.image'    => 'Foto KTP harus berupa gambar JPG atau PNG.',
+            'ktp_photo.mimes'    => 'Foto KTP harus berformat JPG atau PNG.',
+        ], [
             'name'        => 'nama lengkap',
+            'nik'         => 'NIK',
             'ktp_photo'   => 'foto KTP',
             'phone'       => 'Nomor WhatsApp',
             'province'    => 'provinsi',
@@ -50,9 +128,14 @@ class RegistrationController extends Controller
             'terms'       => 'ketentuan dan kebijakan',
         ]);
 
+        // File upload tidak boleh ikut disimpan ke session (tidak bisa diserialisasi).
+        unset($validated['ktp_photo']);
+
+        $package = $this->resolvePackageDetails($validated['package'], $validated['city']);
+
         $registration = array_merge($validated, [
-            'package_name'        => 'Paket Internet',
-            'package_price'       => '-',
+            'package_name'        => $package['name'],
+            'package_price'       => $package['price'],
             'registration_number' => 'JMK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
         ]);
 
@@ -66,7 +149,7 @@ class RegistrationController extends Controller
                     'no_whatsapp'      => $validated['phone'],
                     'no_telp'          => $validated['phone'],
                     'status'           => 'pending',
-                    'nomer_id'         => '',
+                    'nomer_id'         => $validated['nik'],
                     'tanggal_mulai'    => now()->toDateString(),
                     'tanggal_berakhir' => now()->addMonthNoOverflow()->toDateString(),
                     'paket_id'         => $validated['package'],

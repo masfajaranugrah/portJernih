@@ -190,7 +190,7 @@
                                 <ul class="mb-0 mt-2 ps-3" style="font-size:.875rem">
                                     @foreach($apiErrors as $field => $messages)
                                         @foreach($messages as $msg)
-                                            <li>{{ str_replace('registration_', '', $field) }}: {{ $msg }}</li>
+                                            <li>{{ str_replace(['registration_', 'api_'], '', $field) }}: {{ $msg }}</li>
                                         @endforeach
                                     @endforeach
                                 </ul>
@@ -200,6 +200,7 @@
 
                     <div class="row g-4">
                         <div class="col-md-6"><label class="form-label" for="name">NAMA LENGKAP PEMOHON *</label><input class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>@error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                        <div class="col-md-6"><label class="form-label" for="nik">NIK / NOMOR KTP (16 DIGIT) *</label><input class="form-control @error('nik') is-invalid @enderror" id="nik" name="nik" value="{{ old('nik') }}" inputmode="numeric" pattern="[0-9]{16}" maxlength="16" autocomplete="off" required>@error('nik')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="col-md-6">
                             <label class="form-label">FOTO KTP *</label>
                             {{-- hidden file input (diisi dari file picker atau capture kamera) --}}
@@ -222,7 +223,7 @@
                                     <span><span class="text-1">📷 KAMERA</span><span class="text-2">📷 KAMERA</span></span>
                                 </button>
                             </div>
-                            <div class="form-text" style="font-size:.75rem">JPG/PNG, maks. 5 MB.</div>
+                            <div class="form-text" style="font-size:.75rem">JPG/PNG, maks. 5 MB — foto akan dikompres otomatis.</div>
                             @error('ktp_photo')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                         </div>
 
@@ -949,6 +950,78 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* tutup modal kalau klik backdrop */
         modal.addEventListener('click', e => { if (e.target === modal) closeCamera(); });
+
+        /* ── kompres gambar sebelum dikirim ──
+           Foto dari kamera/HP sering berukuran 3–8 MB, sedangkan PHP di
+           server hanya menerima ~2 MB. Gambar diperkecil dan diubah ke JPEG
+           agar tidak gagal upload karena melebihi batas server. */
+        const form      = fileInput.closest('form');
+        const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+        const MAX_EDGE  = 1600;   // px sisi terpanjang
+        const QUALITY   = 0.85;
+        const SKIP_BELOW = 1.5 * 1024 * 1024; // file kecil & sudah JPG/PNG tidak perlu diproses
+        let preparing = false;
+
+        function compressToJpeg(file) {
+            return new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+
+                img.onload = () => {
+                    URL.revokeObjectURL(url);
+
+                    const scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
+                    const width  = Math.max(1, Math.round(img.width  * scale));
+                    const height = Math.max(1, Math.round(img.height * scale));
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width  = width;
+                    canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(blob => {
+                        if (!blob) { reject(new Error('compress-failed')); return; }
+                        const name = (file.name || 'ktp').replace(/\.[^.]+$/, '') + '.jpg';
+                        resolve(new File([blob], name, { type: 'image/jpeg' }));
+                    }, 'image/jpeg', QUALITY);
+                };
+
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode-failed')); };
+                img.src = url;
+            });
+        }
+
+        if (form) {
+            form.addEventListener('submit', event => {
+                if (preparing) return; // sudah diproses, izinkan submit berjalan
+
+                const file = fileInput.files[0];
+                if (!file) return; // biarkan validasi server menangani
+
+                const isJpegOrPng = /^image\/(jpeg|png)$/i.test(file.type);
+                if (file.size <= SKIP_BELOW && isJpegOrPng) return; // sudah cukup kecil
+
+                event.preventDefault();
+                preparing = true;
+                if (submitBtn) submitBtn.disabled = true;
+
+                compressToJpeg(file)
+                    .then(compressed => {
+                        const dt = new DataTransfer();
+                        dt.items.add(compressed);
+                        fileInput.files = dt.files;
+                    })
+                    .catch(() => { /* gagal kompres: kirim file asli, server akan memberi pesan */ })
+                    .finally(() => {
+                        if (submitBtn) submitBtn.disabled = false;
+                        if (typeof form.requestSubmit === 'function') {
+                            form.requestSubmit();
+                        } else {
+                            form.submit();
+                        }
+                    });
+            });
+        }
     })();
 });
 </script>

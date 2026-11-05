@@ -44,6 +44,7 @@ return [
         'url'     => env('JERNIH_API_URL', 'https://layanan.jernih.net.id/api/admin/pelanggan'),
         'key'     => env('JERNIH_API_KEY'),
         'timeout' => (int) env('JERNIH_API_TIMEOUT', 15),
+        'package_url' => env('JERNIH_PACKAGE_URL', 'https://layanan.jernih.net.id/api/paket-online'),
     ],
 
 ];
