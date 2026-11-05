@@ -19,7 +19,7 @@ class RegistrationController extends Controller
     {
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:100'],
-            'nik'         => ['required', 'digits:16'],
+            'ktp_photo'   => ['required', 'image', 'mimes:jpeg,jpg,png', 'max:5120'],
             'phone'       => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
             'email'       => ['nullable', 'email', 'max:100'],
             'province'    => ['required', 'string', 'max:100'],
@@ -36,7 +36,7 @@ class RegistrationController extends Controller
             'terms'       => ['accepted'],
         ], [], [
             'name'        => 'nama lengkap',
-            'nik'         => 'Nomor KTP / NIK',
+            'ktp_photo'   => 'foto KTP',
             'phone'       => 'Nomor WhatsApp',
             'province'    => 'provinsi',
             'city'        => 'kabupaten / kota',
@@ -56,31 +56,29 @@ class RegistrationController extends Controller
             'registration_number' => 'JMK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
         ]);
 
-        $payload = [
-            'nama_lengkap'     => $validated['name'],
-            'no_whatsapp'      => $validated['phone'],
-            'no_telp'          => $validated['phone'],
-            'status'           => 'pending',
-            'nomer_id'         => $validated['nik'],
-            'tanggal_mulai'    => now()->toDateString(),
-            'tanggal_berakhir' => now()->addMonthNoOverflow()->toDateString(),
-            'paket_id'         => $validated['package'],
-            'rt'               => $validated['rt'],
-            'rw'               => $validated['rw'],
-            'alamat_jalan'     => $validated['address'],
-            'desa'             => $validated['village'],
-            'kecamatan'        => $validated['district'],
-            'kabupaten'        => $validated['city'],
-            'provinsi'         => $validated['province'],
-            'kode_pos'         => $validated['postal_code'] ?? null,
-        ];
-
         try {
             $response = Http::withHeaders(['X-API-KEY' => config('services.jernih.key')])
                 ->acceptJson()
-                ->asJson()
                 ->timeout(config('services.jernih.timeout', 15))
-                ->post(config('services.jernih.url'), $payload);
+                ->attach('foto_ktp', file_get_contents($request->file('ktp_photo')->getRealPath()), $request->file('ktp_photo')->getClientOriginalName())
+                ->post(config('services.jernih.url'), [
+                    'nama_lengkap'     => $validated['name'],
+                    'no_whatsapp'      => $validated['phone'],
+                    'no_telp'          => $validated['phone'],
+                    'status'           => 'pending',
+                    'nomer_id'         => '',
+                    'tanggal_mulai'    => now()->toDateString(),
+                    'tanggal_berakhir' => now()->addMonthNoOverflow()->toDateString(),
+                    'paket_id'         => $validated['package'],
+                    'rt'               => $validated['rt'],
+                    'rw'               => $validated['rw'],
+                    'alamat_jalan'     => $validated['address'],
+                    'desa'             => $validated['village'],
+                    'kecamatan'        => $validated['district'],
+                    'kabupaten'        => $validated['city'],
+                    'provinsi'         => $validated['province'],
+                    'kode_pos'         => $validated['postal_code'] ?? null,
+                ]);
         } catch (ConnectionException $exception) {
             report($exception);
 

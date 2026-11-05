@@ -200,7 +200,51 @@
 
                     <div class="row g-4">
                         <div class="col-md-6"><label class="form-label" for="name">NAMA LENGKAP PEMOHON *</label><input class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>@error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                        <div class="col-md-6"><label class="form-label" for="nik">NOMOR KTP / NIK (16 DIGIT) *</label><input class="form-control @error('nik') is-invalid @enderror" id="nik" name="nik" value="{{ old('nik') }}" inputmode="numeric" pattern="[0-9]{16}" maxlength="16" required>@error('nik')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                        <div class="col-md-6">
+                            <label class="form-label">FOTO KTP *</label>
+                            {{-- hidden file input (diisi dari file picker atau capture kamera) --}}
+                            <input type="file" id="ktp_file_input" name="ktp_photo" accept="image/*" style="display:none">
+                            {{-- preview --}}
+                            <div id="ktp-preview-wrap" style="display:none;margin-bottom:10px;position:relative">
+                                <img id="ktp-preview-img" src="" alt="Preview KTP"
+                                     style="width:100%;max-height:180px;object-fit:cover;border-radius:4px;border:1px solid rgba(20,29,43,.2)">
+                                <button type="button" id="ktp-remove" title="Hapus foto"
+                                        style="position:absolute;top:6px;right:6px;background:rgba(220,53,69,.85);border:0;border-radius:50%;width:26px;height:26px;color:#fff;font-size:1rem;line-height:1;cursor:pointer">&times;</button>
+                            </div>
+                            {{-- tombol aksi --}}
+                            <div id="ktp-buttons" class="d-flex gap-2">
+                                <button type="button" id="ktp-pick-file"
+                                        class="at-btn at-btn--border flex-fill" style="min-height:52px;font-size:.8rem">
+                                    <span><span class="text-1">📁 PILIH FILE</span><span class="text-2">📁 PILIH FILE</span></span>
+                                </button>
+                                <button type="button" id="ktp-open-camera"
+                                        class="at-btn at-btn--border flex-fill" style="min-height:52px;font-size:.8rem">
+                                    <span><span class="text-1">📷 KAMERA</span><span class="text-2">📷 KAMERA</span></span>
+                                </button>
+                            </div>
+                            <div class="form-text" style="font-size:.75rem">JPG/PNG, maks. 5 MB.</div>
+                            @error('ktp_photo')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
+
+                        {{-- ── Modal Kamera ── --}}
+                        <div id="ktp-camera-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
+                            <div style="width:min(100%,520px);padding:16px">
+                                <video id="ktp-video" autoplay playsinline muted
+                                       style="width:100%;border-radius:8px;background:#000;max-height:60vh;object-fit:cover"></video>
+                                <canvas id="ktp-canvas" style="display:none"></canvas>
+                                <div class="d-flex gap-3 mt-3 justify-content-center">
+                                    <button type="button" id="ktp-capture-btn"
+                                            class="at-btn" style="min-width:160px">
+                                        <span><span class="text-1">📸 AMBIL FOTO</span><span class="text-2">📸 AMBIL FOTO</span></span>
+                                    </button>
+                                    <button type="button" id="ktp-camera-close"
+                                            class="at-btn at-btn--border" style="min-width:120px;color:#fff;border-color:rgba(255,255,255,.5)">
+                                        <span><span class="text-1">BATAL</span><span class="text-2">BATAL</span></span>
+                                    </button>
+                                </div>
+                                <p id="ktp-camera-error" style="color:#f87171;font-size:.85rem;text-align:center;margin-top:10px;display:none"></p>
+                            </div>
+                        </div>
                         <div class="col-md-6"><label class="form-label" for="phone">NOMOR TELEPON / WHATSAPP *</label><input class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" inputmode="tel" required>@error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="col-md-6"><label class="form-label" for="email">EMAIL <span class="fw-normal text-lowercase">(opsional)</span></label><input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                     </div>
@@ -800,6 +844,101 @@ document.addEventListener('DOMContentLoaded', function () {
 
     locationButton.addEventListener('click', captureCurrentLocation);
     captureCurrentLocation();
+
+    /* ════════════════════════════════════════════════════════════════
+       KTP PHOTO — file picker + kamera getUserMedia
+    ════════════════════════════════════════════════════════════════ */
+    (function () {
+        const fileInput     = document.getElementById('ktp_file_input');
+        const previewWrap   = document.getElementById('ktp-preview-wrap');
+        const previewImg    = document.getElementById('ktp-preview-img');
+        const removeBtn     = document.getElementById('ktp-remove');
+        const btnsWrap      = document.getElementById('ktp-buttons');
+        const pickFileBtn   = document.getElementById('ktp-pick-file');
+        const openCamBtn    = document.getElementById('ktp-open-camera');
+        const modal         = document.getElementById('ktp-camera-modal');
+        const video         = document.getElementById('ktp-video');
+        const canvas        = document.getElementById('ktp-canvas');
+        const captureBtn    = document.getElementById('ktp-capture-btn');
+        const closeCamBtn   = document.getElementById('ktp-camera-close');
+        const camError      = document.getElementById('ktp-camera-error');
+        let stream          = null;
+
+        function showPreview(src) {
+            previewImg.src      = src;
+            previewWrap.style.display = 'block';
+            btnsWrap.style.display    = 'none';
+        }
+
+        function clearPreview() {
+            previewImg.src            = '';
+            previewWrap.style.display = 'none';
+            btnsWrap.style.display    = 'flex';
+            fileInput.value           = '';
+        }
+
+        /* ── file picker ── */
+        pickFileBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => showPreview(e.target.result);
+            reader.readAsDataURL(file);
+        });
+
+        removeBtn.addEventListener('click', clearPreview);
+
+        /* ── kamera ── */
+        function stopStream() {
+            if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+        }
+
+        function closeCamera() {
+            stopStream();
+            modal.style.display = 'none';
+            camError.style.display = 'none';
+        }
+
+        openCamBtn.addEventListener('click', async () => {
+            modal.style.display = 'flex';
+            camError.style.display = 'none';
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+                    audio: false,
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                camError.textContent = 'Kamera tidak dapat diakses. Pastikan izin kamera sudah diberikan.';
+                camError.style.display = 'block';
+            }
+        });
+
+        captureBtn.addEventListener('click', () => {
+            if (!stream) return;
+            canvas.width  = video.videoWidth  || 1280;
+            canvas.height = video.videoHeight || 720;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(blob => {
+                /* masukkan blob ke FileList via DataTransfer */
+                const dt   = new DataTransfer();
+                const file = new File([blob], 'ktp-kamera.jpg', { type: 'image/jpeg' });
+                dt.items.add(file);
+                fileInput.files = dt.files;
+
+                showPreview(canvas.toDataURL('image/jpeg', 0.92));
+                closeCamera();
+            }, 'image/jpeg', 0.92);
+        });
+
+        closeCamBtn.addEventListener('click', closeCamera);
+
+        /* tutup modal kalau klik backdrop */
+        modal.addEventListener('click', e => { if (e.target === modal) closeCamera(); });
+    })();
 });
 </script>
 @endpush
