@@ -700,11 +700,12 @@ document.addEventListener('DOMContentLoaded', function () {
     selPostalCode.restoreLabel();
 
     /* ════════════════════════════════════════════════════════════════
-       PACKAGE BY WILAYAH — fetch dari API berdasarkan kabupaten
+       PACKAGE BY WILAYAH — kabupaten/kota diutamakan, lalu provinsi
     ════════════════════════════════════════════════════════════════ */
     const packageListEl    = document.getElementById('package-list');
     const packageEmptyEl   = document.getElementById('package-empty');
     const packageLoadingEl = document.getElementById('package-loading');
+    const packageApiUrl    = @json(route('registration.packages', [], false));
 
     function formatRupiah(angka) {
         if (angka == null) return 'Rp 0';
@@ -714,27 +715,20 @@ document.addEventListener('DOMContentLoaded', function () {
         return 'Rp ' + Math.round(num).toLocaleString('id-ID');
     }
 
-    async function fetchPackagesByWilayah(kabupaten) {
-        if (!kabupaten || !packageListEl) return;
+    async function fetchPackagesByRegion(province, city) {
+        if (!city || !packageListEl) return;
         packageLoadingEl.style.display = 'block';
         packageEmptyEl.style.display   = 'none';
         packageListEl.innerHTML        = '';
 
-        const cleanWilayah = kabupaten.replace(/\b(kabupaten|kota)\b/gi, '').replace(/\s+/g, ' ').trim();
-
         try {
-            let url  = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(cleanWilayah || kabupaten);
-            let res  = await fetch(url);
-            let json = await res.json();
-            let data = json.data || [];
-
-            /* fallback: coba nama kabupaten asli jika hasil kosong */
-            if (!data.length && cleanWilayah && cleanWilayah.toLowerCase() !== kabupaten.toLowerCase()) {
-                url  = 'https://layanan.jernih.net.id/api/paket-online?wilayah=' + encodeURIComponent(kabupaten);
-                res  = await fetch(url);
-                json = await res.json();
-                data = json.data || [];
-            }
+            const params = new URLSearchParams({ province: province || '', city: city || '' });
+            const res    = await fetch(packageApiUrl + '?' + params.toString(), {
+                headers: { 'Accept': 'application/json' },
+            });
+            if (!res.ok) throw new Error('API error ' + res.status);
+            const json = await res.json();
+            const data = json.data || [];
 
             if (!data.length) {
                 packageEmptyEl.style.display = 'block';
@@ -769,15 +763,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ════════════════════════════════════════════════════════════════
-       PACKAGE VISIBILITY — tampil setelah alamat lengkap + fetch by kabupaten
+       PACKAGE VISIBILITY — tampil setelah alamat lengkap + fetch by wilayah
     ════════════════════════════════════════════════════════════════ */
     const addressFieldIds = ['address', 'rt', 'rw', 'village', 'district', 'city', 'province'];
     const addressFields   = addressFieldIds.map(id => document.getElementById(id));
     const packageSection  = document.getElementById('package-section');
     const addressNote     = document.getElementById('package-address-note');
     const cityHidden      = document.getElementById('city');
+    const provinceHidden  = document.getElementById('province');
 
-    let _lastFetchedCity = null;
+    let _lastFetchedRegion = null;
 
     function updatePackages() {
         const addressComplete = addressFields.every(f => f && f.value.trim());
@@ -785,16 +780,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if (addressNote) addressNote.style.display = addressComplete ? 'none' : 'flex';
 
         if (addressComplete && cityHidden.value) {
-            /* hanya fetch ulang jika kota berubah */
-            if (cityHidden.value !== _lastFetchedCity) {
-                _lastFetchedCity = cityHidden.value;
-                fetchPackagesByWilayah(cityHidden.value);
+            /* hanya fetch ulang jika provinsi/kabupaten berubah */
+            const regionKey = provinceHidden.value + '|' + cityHidden.value;
+            if (regionKey !== _lastFetchedRegion) {
+                _lastFetchedRegion = regionKey;
+                fetchPackagesByRegion(provinceHidden.value, cityHidden.value);
             }
         } else if (!addressComplete) {
             packageListEl.innerHTML        = '';
             packageEmptyEl.style.display   = 'none';
             packageLoadingEl.style.display = 'none';
-            _lastFetchedCity = null;
+            _lastFetchedRegion = null;
         }
     }
 

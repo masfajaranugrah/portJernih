@@ -99,6 +99,7 @@ class RegistrationTest extends TestCase
                     'id' => $this->packageId,
                     'kecepatan' => '20',
                     'harga' => '150000.00',
+                    'wilayah' => 'semarang',
                 ]],
             ]),
             '*' => Http::response(),
@@ -111,6 +112,112 @@ class RegistrationTest extends TestCase
             return $registration['package_name'] === 'Paket 20 Mbps'
                 && $registration['package_price'] === 'Rp 150.000';
         });
+    }
+
+    public function test_registration_resolves_province_package_when_city_has_none(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [[
+                    'id' => $this->packageId,
+                    'kecepatan' => '20',
+                    'harga' => '150000.00',
+                    'wilayah' => 'jateng',
+                ]],
+            ]),
+            '*' => Http::response(),
+        ]);
+
+        $response = $this->post(route('registration.store'), $this->formData());
+
+        $response->assertRedirect(route('registration.success'));
+        $response->assertSessionHas('registration', function (array $registration) {
+            return $registration['package_name'] === 'Paket 20 Mbps'
+                && $registration['package_price'] === 'Rp 150.000';
+        });
+    }
+
+    public function test_packages_endpoint_prefers_city_packages_over_province_packages(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => 'city-pkg', 'kecepatan' => 20, 'harga' => '150000.00', 'wilayah' => 'magelang'],
+                    ['id' => 'province-pkg', 'kecepatan' => 10, 'harga' => '120000.00', 'wilayah' => 'jateng'],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+            'city' => 'Kota Magelang',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'city-pkg');
+    }
+
+    public function test_packages_endpoint_falls_back_to_province_packages(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => 'province-pkg', 'kecepatan' => 10, 'harga' => '120000.00', 'wilayah' => 'jateng'],
+                    ['id' => 'other-pkg', 'kecepatan' => 20, 'harga' => '200000.00', 'wilayah' => 'sukoharjo'],
+                    ['id' => 'global-pkg', 'kecepatan' => 15, 'harga' => '100000.00', 'wilayah' => null],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+            'city' => 'Semarang',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'province-pkg');
+    }
+
+    public function test_packages_endpoint_can_filter_by_province_only(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => 'province-pkg', 'kecepatan' => 10, 'harga' => '120000.00', 'wilayah' => 'jateng'],
+                    ['id' => 'other-pkg', 'kecepatan' => 20, 'harga' => '200000.00', 'wilayah' => 'sukoharjo'],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'provinsi' => 'Jawa Tengah',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'province-pkg');
+    }
+
+    public function test_packages_endpoint_matches_province_alias(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => 'diy-pkg', 'kecepatan' => 20, 'harga' => '150000.00', 'wilayah' => 'diy'],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Daerah Istimewa Yogyakarta',
+            'city' => 'Sleman',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'diy-pkg');
     }
 
     public function test_registration_requires_nik_and_ktp_photo(): void

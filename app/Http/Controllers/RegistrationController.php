@@ -32,34 +32,143 @@ class RegistrationController extends Controller
     }
 
     /**
-     * Ambil nama dan harga paket dari API publik agar rincian pendaftaran
-     * menampilkan harga sebenarnya, bukan "-".
+     * Alias nama provinsi agar nilai "wilayah" pada API paket tetap cocok
+     * meskipun ditulis singkat (mis. "Jawa Tengah" vs "jateng").
      *
-     * @return array{name: string, price: string}
+     * @var array<string, array<int, string>>
      */
-    private function resolvePackageDetails(string $packageId, string $city): array
+    private const REGION_ALIASES = [
+        'jawa tengah' => ['jateng'],
+        'yogyakarta'  => ['diy', 'jogja', 'jogjakarta', 'di yogyakarta'],
+        'jawa timur'  => ['jatim'],
+        'jawa barat'  => ['jabar'],
+        'dki jakarta' => ['jakarta', 'jakarta raya'],
+    ];
+
+    /**
+     * Normalisasi nama wilayah: huruf kecil, tanpa gelar wilayah, tanpa tanda baca.
+     */
+    private function normalizeRegionName(?string $value): string
     {
-        $fallback = ['name' => 'Paket Internet', 'price' => '-'];
+        $value = Str::lower(trim((string) $value));
+        $value = preg_replace('/\b(provinsi|kabupaten|kota|daerah istimewa)\b/u', ' ', $value);
+        $value = preg_replace('/[^a-z0-9]+/u', ' ', (string) $value);
 
-        $wilayah = trim(preg_replace('/\b(kabupaten|kota)\b/i', '', $city));
+        return trim(preg_replace('/\s+/u', ' ', (string) $value));
+    }
 
+    /**
+     * Daftar nama yang dianggap sama dengan wilayah yang dipilih.
+     *
+     * @return array<int, string>
+     */
+    private function regionCandidates(?string $name, bool $withAliases = true): array
+    {
+        $normalized = $this->normalizeRegionName($name);
+
+        if ($normalized === '') {
+            return [];
+        }
+
+        if (! $withAliases) {
+            return [$normalized];
+        }
+
+        $candidates = [$normalized];
+
+        foreach (self::REGION_ALIASES as $canonical => $aliases) {
+            $knownNames = array_map(
+                fn (string $alias): string => $this->normalizeRegionName($alias),
+                array_merge([$canonical], $aliases)
+            );
+
+            if (in_array($normalized, $knownNames, true)) {
+                $candidates = array_merge($candidates, $knownNames);
+            }
+        }
+
+        return array_values(array_unique(array_filter($candidates)));
+    }
+
+    /**
+     * Cocokkan nilai "wilayah" pada paket dengan daftar kandidat wilayah.
+     *
+     * @param  array<string, mixed>  $package
+     * @param  array<int, string>    $candidates
+     */
+    private function packageWilayahMatches(array $package, array $candidates): bool
+    {
+        $wilayah = trim((string) ($package['wilayah'] ?? ''));
+
+        if ($candidates === [] || $wilayah === '') {
+            return false;
+        }
+
+        foreach (preg_split('/\s*[,;\/|]\s*/', $wilayah) ?: [$wilayah] as $part) {
+            if (in_array($this->normalizeRegionName($part), $candidates, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Ambil paket dari API publik lalu pilih sesuai wilayah.
+     *
+     * Paket kabupaten/kota diutamakan. Jika tidak ada paket khusus kabupaten/kota,
+     * paket provinsi dipakai sebagai fallback.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function fetchPackages(?string $province, ?string $city): array
+    {
         try {
             $response = Http::acceptJson()
                 ->timeout(config('services.jernih.timeout', 15))
-                ->get(config('services.jernih.package_url'), [
-                    'wilayah' => $wilayah !== '' ? $wilayah : $city,
-                ]);
+                ->get(config('services.jernih.package_url'));
         } catch (ConnectionException $exception) {
             report($exception);
 
-            return $fallback;
+            return [];
         }
 
         if ($response->failed()) {
-            return $fallback;
+            return [];
         }
 
-        foreach ((array) $response->json('data', []) as $package) {
+        $packages = (array) $response->json('data', []);
+        $cityCandidates = $this->regionCandidates($city, false);
+        $provinceCandidates = $this->regionCandidates($province);
+
+        $byCity = array_values(array_filter(
+            $packages,
+            fn ($package): bool => is_array($package)
+                && $this->packageWilayahMatches($package, $cityCandidates)
+        ));
+
+        if ($byCity !== []) {
+            return $byCity;
+        }
+
+        return array_values(array_filter(
+            $packages,
+            fn ($package): bool => is_array($package)
+                && $this->packageWilayahMatches($package, $provinceCandidates)
+        ));
+    }
+
+    /**
+     * Ambil nama dan harga paket agar rincian pendaftaran menampilkan harga
+     * sebenarnya, bukan "-".
+     *
+     * @return array{name: string, price: string}
+     */
+    private function resolvePackageDetails(string $packageId, ?string $province, string $city): array
+    {
+        $fallback = ['name' => 'Paket Internet', 'price' => '-'];
+
+        foreach ($this->fetchPackages($province, $city) as $package) {
             if ((string) ($package['id'] ?? '') !== $packageId) {
                 continue;
             }
@@ -76,6 +185,27 @@ class RegistrationController extends Controller
         }
 
         return $fallback;
+    }
+
+    /**
+     * Daftar paket untuk wilayah yang dipilih (dipakai halaman registrasi).
+     */
+    public function packages(Request $request)
+    {
+        $validated = $request->validate([
+            'province'  => ['nullable', 'string', 'max:100'],
+            'provinsi'  => ['nullable', 'string', 'max:100'],
+            'city'      => ['nullable', 'string', 'max:100'],
+            'kabupaten' => ['nullable', 'string', 'max:100'],
+            'kota'      => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $province = $validated['province'] ?? $validated['provinsi'] ?? null;
+        $city = $validated['city'] ?? $validated['kabupaten'] ?? $validated['kota'] ?? null;
+
+        return response()->json([
+            'data' => $this->fetchPackages($province, $city),
+        ]);
     }
 
     public function create()
@@ -131,7 +261,11 @@ class RegistrationController extends Controller
         // File upload tidak boleh ikut disimpan ke session (tidak bisa diserialisasi).
         unset($validated['ktp_photo']);
 
-        $package = $this->resolvePackageDetails($validated['package'], $validated['city']);
+        $package = $this->resolvePackageDetails(
+            $validated['package'],
+            $validated['province'],
+            $validated['city']
+        );
 
         $registration = array_merge($validated, [
             'package_name'        => $package['name'],

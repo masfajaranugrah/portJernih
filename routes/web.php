@@ -13,6 +13,7 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::post('/chatbot', [ChatbotController::class, 'chat'])->name('chatbot.chat');
 Route::get('/about', [PageController::class, 'show'])->defaults('page', 'about')->name('about');
 Route::get('/registrasi', [RegistrationController::class, 'create'])->name('registration.create');
+Route::get('/api/paket', [RegistrationController::class, 'packages'])->name('registration.packages');
 Route::post('/registrasi', [RegistrationController::class, 'store'])->name('registration.store');
 Route::get('/registrasi/berhasil', [RegistrationController::class, 'success'])->name('registration.success');
 
