@@ -141,7 +141,7 @@ Jalin kerja sama bersama kami dan kembangkan peluang bisnis yang saling menguntu
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-9">
-                                <h3 class="reveal-text lh-1">Koneksi internet cepat dan stabil, siap menunjang produktivitas rumah dan bisnis Anda di Klaten.</h3>
+                                <h3 class="reveal-text lh-1">Koneksi internet cepat dan stabil, siap menunjang produktivitas rumah dan bisnis Anda Seluruh Indonesia.</h3>
                             </div>
                             <div class="col-lg-3 col-md-6 ms-auto mt-md-0 mt-4">
                                 <ul class="list-unstyled navigation-section-10">
