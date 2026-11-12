@@ -46,12 +46,28 @@ class RegistrationController extends Controller
     ];
 
     /**
+     * Field API paket yang menyatakan wilayah pada tiap tingkat.
+     *
+     * API paket lama hanya mengirim satu field "wilayah". Field per tingkat
+     * dipakai lebih dulu bila tersedia agar tingkat desa/kecamatan/kabupaten
+     * tidak ambigu. "wilayah" menjadi fallback untuk data API lama.
+     *
+     * @var array<string, array<int, string>>
+     */
+    private const REGION_FIELDS = [
+        'village'  => ['desa', 'kelurahan', 'village'],
+        'district' => ['kecamatan', 'district'],
+        'city'     => ['kabupaten', 'kota', 'city'],
+        'province' => ['provinsi', 'province'],
+    ];
+
+    /**
      * Normalisasi nama wilayah: huruf kecil, tanpa gelar wilayah, tanpa tanda baca.
      */
     private function normalizeRegionName(?string $value): string
     {
         $value = Str::lower(trim((string) $value));
-        $value = preg_replace('/\b(provinsi|kabupaten|kota|daerah istimewa)\b/u', ' ', $value);
+        $value = preg_replace('/\b(provinsi|kabupaten|kota|kecamatan|desa|kelurahan|daerah istimewa)\b/u', ' ', $value);
         $value = preg_replace('/[^a-z0-9]+/u', ' ', (string) $value);
 
         return trim(preg_replace('/\s+/u', ' ', (string) $value));
@@ -91,20 +107,19 @@ class RegistrationController extends Controller
     }
 
     /**
-     * Cocokkan nilai "wilayah" pada paket dengan daftar kandidat wilayah.
+     * Cocokkan satu nilai wilayah (bisa berisi beberapa nama) dengan kandidat.
      *
-     * @param  array<string, mixed>  $package
-     * @param  array<int, string>    $candidates
+     * @param  array<int, string>  $candidates
      */
-    private function packageWilayahMatches(array $package, array $candidates): bool
+    private function regionValueMatches(?string $value, array $candidates): bool
     {
-        $wilayah = trim((string) ($package['wilayah'] ?? ''));
+        $value = trim((string) $value);
 
-        if ($candidates === [] || $wilayah === '') {
+        if ($candidates === [] || $value === '') {
             return false;
         }
 
-        foreach (preg_split('/\s*[,;\/|]\s*/', $wilayah) ?: [$wilayah] as $part) {
+        foreach (preg_split('/\s*[,;\/|]\s*/', $value) ?: [$value] as $part) {
             if (in_array($this->normalizeRegionName($part), $candidates, true)) {
                 return true;
             }
@@ -114,14 +129,110 @@ class RegistrationController extends Controller
     }
 
     /**
+     * Cocokkan nilai "wilayah" pada paket dengan daftar kandidat wilayah.
+     *
+     * @param  array<string, mixed>  $package
+     * @param  array<int, string>    $candidates
+     */
+    private function packageWilayahMatches(array $package, array $candidates): bool
+    {
+        return $this->regionValueMatches($package['wilayah'] ?? null, $candidates);
+    }
+
+    /**
+     * Apakah paket sudah memakai field wilayah per tingkat (bukan hanya "wilayah").
+     *
+     * @param  array<string, mixed>  $package
+     */
+    private function packageHasExplicitRegion(array $package): bool
+    {
+        foreach (self::REGION_FIELDS as $fields) {
+            foreach ($fields as $field) {
+                if (trim((string) ($package[$field] ?? '')) !== '') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Cocokkan paket pada satu tingkat wilayah (desa/kecamatan/kabupaten/provinsi).
+     *
+     * @param  array<string, mixed>  $package
+     * @param  array<int, string>    $candidates
+     */
+    private function packageMatchesRegionLevel(array $package, string $level, array $candidates): bool
+    {
+        if ($candidates === []) {
+            return false;
+        }
+
+        /* Data API lama hanya punya "wilayah", jadi dicocokkan per tingkat. */
+        if (! $this->packageHasExplicitRegion($package)) {
+            return $this->packageWilayahMatches($package, $candidates);
+        }
+
+        foreach (self::REGION_FIELDS[$level] ?? [] as $field) {
+            if ($this->regionValueMatches($package[$field] ?? null, $candidates)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Tentukan teks promo dari data paket API.
+     *
+     * Jika API mengirim field "promo" (walau nilainya null), field itu yang
+     * jadi acuan: null berarti promo disembunyikan. Deteksi dari nama paket
+     * hanya dipakai untuk API lama yang belum punya field "promo".
+     *
+     * @param  array<string, mixed>  $package
+     */
+    private function packagePromoLabel(array $package): ?string
+    {
+        if (array_key_exists('promo', $package)) {
+            $promo = $package['promo'];
+
+            return is_string($promo) && trim($promo) !== '' ? trim($promo) : null;
+        }
+
+        $name = trim((string) ($package['nama_paket'] ?? ''));
+
+        if ($name === '' || ! preg_match('/\b(promo|gratis|free|diskon|bonus|cashback)\b/i', $name)) {
+            return null;
+        }
+
+        $label = $this->cleanPromoLabel($name);
+
+        return $label !== '' ? $label : null;
+    }
+
+    private function cleanPromoLabel(string $label): string
+    {
+        /* Buang keterangan kecepatan karena sudah tampil sebagai judul card. */
+        $label = preg_replace('/\b\d+\s*mbps\b/i', ' ', $label);
+        $label = trim(preg_replace('/\s+/', ' ', (string) $label));
+
+        /* Hindari "PROMO · Promo ..." yang berulang. */
+        $label = preg_replace('/^\s*promo\s+/i', '', $label);
+
+        return trim((string) $label);
+    }
+
+    /**
      * Ambil paket dari API publik lalu pilih sesuai wilayah.
      *
-     * Paket kabupaten/kota diutamakan. Jika tidak ada paket khusus kabupaten/kota,
-     * paket provinsi dipakai sebagai fallback.
+     * Urutan prioritas: desa/kelurahan, kecamatan, kabupaten/kota, lalu provinsi.
+     * Tingkat pertama yang punya paket dipakai; tingkat di bawahnya tidak
+     * dicampur agar paket desa tidak tercampur paket kecamatan/kabupaten.
      *
      * @return array<int, array<string, mixed>>
      */
-    private function fetchPackages(?string $province, ?string $city): array
+    private function fetchPackages(?string $province, ?string $city, ?string $district = null, ?string $village = null): array
     {
         try {
             $response = Http::acceptJson()
@@ -137,25 +248,37 @@ class RegistrationController extends Controller
             return [];
         }
 
-        $packages = (array) $response->json('data', []);
-        $cityCandidates = $this->regionCandidates($city, false);
-        $provinceCandidates = $this->regionCandidates($province);
+        $packages = array_map(
+            fn ($package): mixed => is_array($package)
+                ? array_merge($package, ['promo' => $this->packagePromoLabel($package)])
+                : $package,
+            (array) $response->json('data', [])
+        );
 
-        $byCity = array_values(array_filter(
-            $packages,
-            fn ($package): bool => is_array($package)
-                && $this->packageWilayahMatches($package, $cityCandidates)
-        ));
+        $levels = [
+            'village'  => $this->regionCandidates($village, false),
+            'district' => $this->regionCandidates($district, false),
+            'city'     => $this->regionCandidates($city, false),
+            'province' => $this->regionCandidates($province),
+        ];
 
-        if ($byCity !== []) {
-            return $byCity;
+        foreach ($levels as $level => $candidates) {
+            if ($candidates === []) {
+                continue;
+            }
+
+            $matched = array_values(array_filter(
+                $packages,
+                fn ($package): bool => is_array($package)
+                    && $this->packageMatchesRegionLevel($package, $level, $candidates)
+            ));
+
+            if ($matched !== []) {
+                return $matched;
+            }
         }
 
-        return array_values(array_filter(
-            $packages,
-            fn ($package): bool => is_array($package)
-                && $this->packageWilayahMatches($package, $provinceCandidates)
-        ));
+        return [];
     }
 
     /**
@@ -164,11 +287,16 @@ class RegistrationController extends Controller
      *
      * @return array{name: string, price: string}
      */
-    private function resolvePackageDetails(string $packageId, ?string $province, string $city): array
-    {
+    private function resolvePackageDetails(
+        string $packageId,
+        ?string $province,
+        string $city,
+        ?string $district = null,
+        ?string $village = null
+    ): array {
         $fallback = ['name' => 'Paket Internet', 'price' => '-'];
 
-        foreach ($this->fetchPackages($province, $city) as $package) {
+        foreach ($this->fetchPackages($province, $city, $district, $village) as $package) {
             if ((string) ($package['id'] ?? '') !== $packageId) {
                 continue;
             }
@@ -198,13 +326,20 @@ class RegistrationController extends Controller
             'city'      => ['nullable', 'string', 'max:100'],
             'kabupaten' => ['nullable', 'string', 'max:100'],
             'kota'      => ['nullable', 'string', 'max:100'],
+            'district'  => ['nullable', 'string', 'max:100'],
+            'kecamatan' => ['nullable', 'string', 'max:100'],
+            'village'   => ['nullable', 'string', 'max:100'],
+            'desa'      => ['nullable', 'string', 'max:100'],
+            'kelurahan' => ['nullable', 'string', 'max:100'],
         ]);
 
         $province = $validated['province'] ?? $validated['provinsi'] ?? null;
         $city = $validated['city'] ?? $validated['kabupaten'] ?? $validated['kota'] ?? null;
+        $district = $validated['district'] ?? $validated['kecamatan'] ?? null;
+        $village = $validated['village'] ?? $validated['desa'] ?? $validated['kelurahan'] ?? null;
 
         return response()->json([
-            'data' => $this->fetchPackages($province, $city),
+            'data' => $this->fetchPackages($province, $city, $district, $village),
         ]);
     }
 
@@ -264,7 +399,9 @@ class RegistrationController extends Controller
         $package = $this->resolvePackageDetails(
             $validated['package'],
             $validated['province'],
-            $validated['city']
+            $validated['city'],
+            $validated['district'],
+            $validated['village']
         );
 
         $registration = array_merge($validated, [

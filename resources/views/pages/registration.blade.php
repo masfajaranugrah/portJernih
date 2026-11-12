@@ -25,6 +25,10 @@
         .package-option__speed { font-size: 1.4rem; font-weight: 700; letter-spacing: -.04em; }
         .package-option__price { margin-top: auto; padding-top: 18px; }
         .package-option__price small { font-size: .75rem; opacity: .7; }
+        .package-option__promo { align-items: center; align-self: flex-start; background: #fff4d6; border: 1px solid rgba(138, 90, 0, .22); border-radius: 999px; color: #8a5a00; display: inline-flex; font-size: .68rem; font-weight: 700; letter-spacing: .02em; line-height: 1.35; margin-bottom: 10px; max-width: 100%; padding: 4px 9px; white-space: normal; }
+        .package-option input:checked + .package-option__body .package-option__promo { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .28); color: #ffe9b0; }
+        [data-bs-theme="dark"] .package-option__promo { background: rgba(255, 214, 102, .12); border-color: rgba(255, 214, 102, .28); color: #ffd666; }
+        [data-bs-theme="dark"] .package-option input:checked + .package-option__body .package-option__promo { background: #fff4d6; border-color: rgba(138, 90, 0, .22); color: #8a5a00; }
         .package-section { display: none; }
         .package-section.is-ready { animation: package-reveal .35s ease both; display: block; }
         .package-card.is-unavailable { display: none; }
@@ -700,7 +704,8 @@ document.addEventListener('DOMContentLoaded', function () {
     selPostalCode.restoreLabel();
 
     /* ════════════════════════════════════════════════════════════════
-       PACKAGE BY WILAYAH — kabupaten/kota diutamakan, lalu provinsi
+       PACKAGE BY WILAYAH — desa diutamakan, lalu kecamatan,
+       kabupaten/kota, dan terakhir provinsi
     ════════════════════════════════════════════════════════════════ */
     const packageListEl    = document.getElementById('package-list');
     const packageEmptyEl   = document.getElementById('package-empty');
@@ -715,14 +720,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return 'Rp ' + Math.round(num).toLocaleString('id-ID');
     }
 
-    async function fetchPackagesByRegion(province, city) {
+    async function fetchPackagesByRegion(province, city, district, village) {
         if (!city || !packageListEl) return;
         packageLoadingEl.style.display = 'block';
         packageEmptyEl.style.display   = 'none';
         packageListEl.innerHTML        = '';
 
         try {
-            const params = new URLSearchParams({ province: province || '', city: city || '' });
+            const params = new URLSearchParams({
+                province: province || '',
+                city:     city || '',
+                district: district || '',
+                village:  village || '',
+            });
             const res    = await fetch(packageApiUrl + '?' + params.toString(), {
                 headers: { 'Accept': 'application/json' },
             });
@@ -740,6 +750,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const price = formatRupiah(pkg.harga);
                 const speed = (pkg.kecepatan ?? '') + ' Mbps';
                 const checked = oldPackage === pkg.id ? 'checked' : '';
+                const promoText = (pkg.promo ?? '').toString().trim();
+                const promo = promoText
+                    ? `<span class="package-option__promo">${escHtml(promoText)}</span>`
+                    : '';
                 return `<div class="col-xl col-lg-4 col-md-4 col-6 package-card">
                     <label class="package-option">
                         <input type="radio" name="package" value="${escHtml(pkg.id)}" ${checked} required>
@@ -747,6 +761,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span class="package-option__check">
                                 <svg viewBox="0 0 12 12" fill="none"><path d="M2 6.2 4.6 9 10 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </span>
+                            ${promo}
                             <span class="d-block fz-font-label neutral-500 mb-2">PAKET FIBER</span>
                             <span class="package-option__speed d-block">${escHtml(speed)}</span>
                             <span class="package-option__price d-block fw-600">${escHtml(price)} <small>/bulan</small></span>
@@ -771,6 +786,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const addressNote     = document.getElementById('package-address-note');
     const cityHidden      = document.getElementById('city');
     const provinceHidden  = document.getElementById('province');
+    const districtHidden  = document.getElementById('district');
+    const villageHidden   = document.getElementById('village');
 
     let _lastFetchedRegion = null;
 
@@ -780,11 +797,21 @@ document.addEventListener('DOMContentLoaded', function () {
         if (addressNote) addressNote.style.display = addressComplete ? 'none' : 'flex';
 
         if (addressComplete && cityHidden.value) {
-            /* hanya fetch ulang jika provinsi/kabupaten berubah */
-            const regionKey = provinceHidden.value + '|' + cityHidden.value;
+            /* hanya fetch ulang jika provinsi/kabupaten/kecamatan/desa berubah */
+            const regionKey = [
+                provinceHidden.value,
+                cityHidden.value,
+                districtHidden.value,
+                villageHidden.value,
+            ].join('|');
             if (regionKey !== _lastFetchedRegion) {
                 _lastFetchedRegion = regionKey;
-                fetchPackagesByRegion(provinceHidden.value, cityHidden.value);
+                fetchPackagesByRegion(
+                    provinceHidden.value,
+                    cityHidden.value,
+                    districtHidden.value,
+                    villageHidden.value
+                );
             }
         } else if (!addressComplete) {
             packageListEl.innerHTML        = '';

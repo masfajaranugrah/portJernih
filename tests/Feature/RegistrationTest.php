@@ -158,6 +158,143 @@ class RegistrationTest extends TestCase
         $response->assertJsonPath('data.0.id', 'city-pkg');
     }
 
+    public function test_packages_endpoint_prefers_village_packages_over_other_levels(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => 'village-pkg', 'kecepatan' => 20, 'harga' => '100000.00', 'wilayah' => 'Jurangombo'],
+                    ['id' => 'district-pkg', 'kecepatan' => 30, 'harga' => '150000.00', 'wilayah' => 'Magelang Tengah'],
+                    ['id' => 'city-pkg', 'kecepatan' => 40, 'harga' => '200000.00', 'wilayah' => 'magelang'],
+                    ['id' => 'province-pkg', 'kecepatan' => 50, 'harga' => '250000.00', 'wilayah' => 'jateng'],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+            'city' => 'Kota Magelang',
+            'district' => 'Magelang Tengah',
+            'village' => 'Jurangombo',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'village-pkg');
+    }
+
+    public function test_packages_endpoint_uses_district_packages_when_village_has_none(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => 'district-pkg', 'kecepatan' => 30, 'harga' => '150000.00', 'wilayah' => 'Magelang Tengah'],
+                    ['id' => 'city-pkg', 'kecepatan' => 40, 'harga' => '200000.00', 'wilayah' => 'magelang'],
+                    ['id' => 'province-pkg', 'kecepatan' => 50, 'harga' => '250000.00', 'wilayah' => 'jateng'],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+            'city' => 'Kota Magelang',
+            'district' => 'Magelang Tengah',
+            'village' => 'Jurangombo',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'district-pkg');
+    }
+
+    public function test_packages_endpoint_accepts_indonesian_region_parameter_names(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => 'village-pkg', 'kecepatan' => 20, 'harga' => '100000.00', 'wilayah' => 'Jurangombo'],
+                    ['id' => 'district-pkg', 'kecepatan' => 30, 'harga' => '150000.00', 'wilayah' => 'Magelang Tengah'],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'provinsi' => 'Jawa Tengah',
+            'kabupaten' => 'Kota Magelang',
+            'kecamatan' => 'Magelang Tengah',
+            'desa' => 'Jurangombo',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'village-pkg');
+    }
+
+    public function test_packages_endpoint_matches_explicit_region_fields(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    [
+                        'id' => 'village-pkg',
+                        'kecepatan' => 20,
+                        'harga' => '100000.00',
+                        'desa' => 'Jurangombo',
+                        'kecamatan' => 'Magelang Tengah',
+                        'kabupaten' => 'Kota Magelang',
+                        'provinsi' => 'Jawa Tengah',
+                    ],
+                    [
+                        'id' => 'city-pkg',
+                        'kecepatan' => 40,
+                        'harga' => '200000.00',
+                        'kabupaten' => 'Kota Magelang',
+                        'provinsi' => 'Jawa Tengah',
+                    ],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+            'city' => 'Kota Magelang',
+            'district' => 'Magelang Tengah',
+            'village' => 'Jurangombo',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', 'village-pkg');
+    }
+
+    public function test_registration_resolves_village_package_before_city_package(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    ['id' => $this->packageId, 'kecepatan' => 20, 'harga' => '100000.00', 'wilayah' => 'Jurangombo'],
+                    ['id' => 'city-pkg', 'kecepatan' => 50, 'harga' => '200000.00', 'wilayah' => 'magelang'],
+                ],
+            ]),
+            '*' => Http::response(),
+        ]);
+
+        $data = $this->formData();
+        $data['package'] = $this->packageId;
+        $data['village'] = 'Jurangombo';
+        $data['district'] = 'Magelang Tengah';
+        $data['city'] = 'Kota Magelang';
+        $data['province'] = 'Jawa Tengah';
+
+        $response = $this->post(route('registration.store'), $data);
+
+        $response->assertRedirect(route('registration.success'));
+        $response->assertSessionHas('registration', function (array $registration) {
+            return $registration['package_name'] === 'Paket 20 Mbps'
+                && $registration['package_price'] === 'Rp 100.000';
+        });
+    }
+
     public function test_packages_endpoint_falls_back_to_province_packages(): void
     {
         Http::fake([
@@ -178,6 +315,89 @@ class RegistrationTest extends TestCase
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
         $response->assertJsonPath('data.0.id', 'province-pkg');
+    }
+
+    public function test_packages_endpoint_includes_promo_label_for_card(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    [
+                        'id' => 'promo-pkg',
+                        'nama_paket' => 'Promo gratis 1 bulan 20mbps',
+                        'kecepatan' => 20,
+                        'harga' => '120000.00',
+                        'wilayah' => 'Jawa Tengah',
+                    ],
+                    [
+                        'id' => 'regular-pkg',
+                        'nama_paket' => 'Paket reguler 20mbps',
+                        'kecepatan' => 20,
+                        'harga' => '150000.00',
+                        'wilayah' => 'Jawa Tengah',
+                    ],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(2, 'data');
+        $response->assertJsonPath('data.0.promo', 'gratis 1 bulan');
+        $response->assertJsonPath('data.1.promo', null);
+    }
+
+    public function test_packages_endpoint_uses_api_promo_field_verbatim(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    [
+                        'id' => 'promo-pkg',
+                        'nama_paket' => 'Promo langganan 1 bulan 50mbps',
+                        'kecepatan' => 50,
+                        'harga' => '180000.00',
+                        'wilayah' => 'Jawa Tengah',
+                        'promo' => 'GRATIS LANGGANAN 1 BULAN',
+                    ],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonPath('data.0.promo', 'GRATIS LANGGANAN 1 BULAN');
+    }
+
+    public function test_packages_endpoint_hides_promo_when_api_promo_is_null(): void
+    {
+        Http::fake([
+            '*paket-online*' => Http::response([
+                'data' => [
+                    [
+                        'id' => 'promo-pkg',
+                        'nama_paket' => 'Promo langganan 1 bulan 50mbps',
+                        'kecepatan' => 50,
+                        'harga' => '180000.00',
+                        'wilayah' => 'Jawa Tengah',
+                        'promo' => null,
+                    ],
+                ],
+            ]),
+        ]);
+
+        $response = $this->getJson(route('registration.packages', [
+            'province' => 'Jawa Tengah',
+        ]));
+
+        $response->assertOk();
+        $response->assertJsonPath('data.0.promo', null);
     }
 
     public function test_packages_endpoint_can_filter_by_province_only(): void
