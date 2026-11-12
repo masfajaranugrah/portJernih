@@ -32,6 +32,18 @@
                                                 0823-2322-8787
                                             </a>
                                         </p>
+                                        <span class="d-block fz-font-label neutral-0 opacity-50 text-uppercase mb-3">Tel CS</span>
+                                        <p class="h6 text-white mb-2">
+                                            <a href="tel:+6285741475779" class="text-white text-decoration-none">
+                                                0857-4147-5779
+                                            </a>
+                                        </p>
+                                        <span class="d-block fz-font-label neutral-0 opacity-50 text-uppercase mb-3">Tel Admin</span>
+                                        <p class="h6 text-white mb-2">
+                                            <a href="tel:+6282227452291" class="text-white text-decoration-none">
+                                                0822-2745-2291
+                                            </a>
+                                        </p>
 
 
                                     </div>
