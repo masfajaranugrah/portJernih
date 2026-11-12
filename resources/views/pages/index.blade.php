@@ -77,7 +77,7 @@
                                         <span class="text-2">REGISTRASI MUDAH</span>
                                     </span>
                                 </span>
-                                <h2 class="h3 mb-3">Pasang internet baru hanya dalam 3 langkah</h2>
+                                <h2 class="h3 mb-3">layanan Internet JernihNet</h2>
                                 <p class="neutral-500 mb-4">Mulai dari formulir registrasi. Tim JernihNet akan memproses permohonan dan menghubungi Anda.</p>
                                 <a class="at-btn" href="{{ route('registration.create') }}">
                                     <span>
@@ -91,22 +91,25 @@
                                     <div class="col-md-4">
                                         <div class="h-100 p-4 rounded-4 bg-neutral-50">
                                             <span class="h3 fw-700 d-block mb-3">01</span>
-                                            <h3 class="h6 mb-2">Isi data pemohon</h3>
-                                            <p class="small neutral-500 mb-0">Lengkapi nama, NIK, WhatsApp, dan alamat pemasangan.</p>
+                                            <h3 class="h6 mb-2">DADICATED INTERNET </h3>
+                                            <p class="small neutral-500 mb-0">Koneksi internet dedicated berkecepatan tinggi dengan bandwidth stabil dan eksklusif untuk mendukung produktivitas serta kebutuhan operasional bisnis Anda.</p>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="h-100 p-4 rounded-4 bg-neutral-50">
                                             <span class="h3 fw-700 d-block mb-3">02</span>
-                                            <h3 class="h6 mb-2">Tandai lokasi & pilih paket</h3>
-                                            <p class="small neutral-500 mb-0">Tentukan titik rumah dan pilih paket internet yang sesuai.</p>
+                                            <h3 class="h6 mb-2">FTTH INTERNET</h3>
+                                            <p class="small neutral-500 mb-0">Nikmati internet fiber optik berkecepatan tinggi dengan koneksi stabil dan andal untuk menunjang aktivitas digital, hiburan, dan kebutuhan internet seluruh keluarga.</p>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="h-100 p-4 rounded-4 bg-neutral-50">
                                             <span class="h3 fw-700 d-block mb-3">03</span>
-                                            <h3 class="h6 mb-2">Kami hubungi Anda</h3>
-                                            <p class="small neutral-500 mb-0">Tim kami memeriksa jangkauan jaringan dan menjadwalkan pemasangan.</p>
+                                            <h3 class="h6 mb-2">KEMITRAAN</h3>
+                                            <p class="small neutral-500 mb-0">KEMITRAAN
+
+Jalin kerja sama bersama kami dan kembangkan peluang bisnis yang saling menguntungkan. Dapatkan dukungan layanan, teknologi, serta jaringan internet berkualitas untuk tumbuh dan sukses bersama.
+</p>
                                         </div>
                                     </div>
                                 </div>

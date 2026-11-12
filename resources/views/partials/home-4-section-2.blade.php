@@ -22,7 +22,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-9">
-                                <h3 class="reveal-text lh-1">Internet fiber optik cepat & stabil untuk rumah dan bisnis di Klaten.</h3>
+                                <h3 class="reveal-text lh-1">Internet fiber optik cepat & stabil untuk rumah dan bisnis di Seluruh Indonesia.</h3>
                             </div>
                             <div class="col-lg-3 col-md-6 ms-auto mt-md-0 mt-4">
                                 <ul class="list-unstyled navigation-section-10">
