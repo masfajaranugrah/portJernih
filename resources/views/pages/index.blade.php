@@ -13,9 +13,9 @@
                                 <div class="col-12">
                                     <span class="sec-1-home-4__tagline d-inline-block mb-30">[ Internet Service Provider ]</span>
                                 </div>
-                                 <div class="col-xxl-4 col-lg-5 mb-5 mb-lg-0">
+                                 <div class="mb-5 mb-lg-0">
                                      <h4 class="sec-1-home-4__headline text-white mb-4 mb-md-5 lh-1">
-                                         Internet Cepat, Lancar dan Stabil.
+                                         Internet Cepat, Lancar & Stabil.
                                      </h4>
                                  </div>
                                 <!-- Right: Image Cards + Tags -->
