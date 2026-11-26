@@ -389,9 +389,9 @@
                         </div>
                     </div>
                 </div>
-                <!--End Home 2 Section 3-->
+
                   <!--Home 4 Section 6-->
-                <div class="sec-6-home-4 pt-120 pb-120">
+                <div class="sec-6-home-4 pt-120 pb-60 d-none d-lg-block">
                     <div class="container">
                         <div class="at-banner-thumb fix w-100 scale-up-img p-relative changeless d-none d-lg-block">
                             <img data-speed="0.4" class="img-cover scale-up" src="{{ asset('assets/imgs/pages/paralax.jpg') }}" alt="jernihnet">
@@ -433,6 +433,9 @@
                         </div>
                     </div>
                 </div>
+
+                @include('partials.elfsight-instagram-feed')
+
                 <!-- Home 4 Section 4 -->
                 <div class="container-2200">
                     <div class="rounded-5 mx-lg-3 mx-2 bg-neutral-50 overflow-hidden pb-lg-5">

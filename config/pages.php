@@ -107,6 +107,14 @@ return [
         'backtotop' => true,
         'scripts' => [],
     ],
+    'gallery' => [
+        'title' => "Galeri - Jernih Multi Komunikasi",
+        'header' => 'standard',
+        'footer' => 'standard',
+        'body' => 'at-magic-cursor',
+        'backtotop' => true,
+        'scripts' => [],
+    ],
     'faqs' => [
         'title' => "Orisa - Creative Agency & Portfolio HTML Template",
         'header' => 'standard',
